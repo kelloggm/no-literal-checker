@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id "com.diffplug.gradle.spotless" version "3.23.0"
 }
 
 repositories {
@@ -29,10 +30,19 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'org.checkerframework'
-            artifactId = 'templatefora-checker'
+            artifactId = 'noliteral-checker'
             version = '0.1-SNAPSHOT'
 
             from components.java
         }
+    }
+}
+
+// run google java format to enforce style
+spotless {
+    // uncomment this line to temporarily disable spotless (i.e. when debugging)
+    // enforceCheck = false
+    java {
+        googleJavaFormat()
     }
 }
