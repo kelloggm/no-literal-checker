@@ -11,7 +11,12 @@ import org.checkerframework.framework.qual.LiteralKind;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
-/** The top type for the NoLiteral Checker's type system. */
+/** The top type for the NoLiteral Checker's type system.
+ *
+ *  This type represents an expression that might contain a literal,
+ *  like 5 or {0xa, 0xb}. It is inferred for all manifest literals
+ *  in the program.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @ImplicitFor(literals = {LiteralKind.ALL})

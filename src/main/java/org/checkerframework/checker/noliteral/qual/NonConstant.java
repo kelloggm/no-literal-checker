@@ -11,7 +11,12 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TargetLocations;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
-/** The bottom type for the NoLiteral Checker's type system. */
+/** The bottom type for the NoLiteral Checker's type system.
+ *
+ *  This is the default type in user-written code. All calls
+ *  external to the application (i.e. into unchecked class files)
+ *  are also assumed to be of this type.
+ */
 @SubtypeOf({MaybeConstant.class})
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
