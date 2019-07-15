@@ -22,7 +22,15 @@ import org.checkerframework.framework.qual.TypeUseLocation;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
-@QualifierForLiterals(LiteralKind.ALL)
+// This list intentionally excludes null and boolean, because they aren't very interesting
+@QualifierForLiterals({
+  LiteralKind.CHAR,
+  LiteralKind.DOUBLE,
+  LiteralKind.FLOAT,
+  LiteralKind.INT,
+  LiteralKind.LONG,
+  LiteralKind.STRING
+})
 @DefaultInUncheckedCodeFor({TypeUseLocation.PARAMETER, TypeUseLocation.LOWER_BOUND})
 @SubtypeOf({})
 public @interface MaybeConstant {}
