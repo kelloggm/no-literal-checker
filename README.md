@@ -46,11 +46,11 @@ a stub file is supplied that overwrites this default
 As a consequence of these rules, users MUST always write stub files for libraries
 they intend to protect - this checker is **useless** without such a stub.
 
-For example, to enforce that calls to `java.security.SecretKeySpec`'s constructor
+For example, to enforce that calls to `javax.crypto.spec.SecretKeySpec`'s constructor
 only ever provide non-constant keys, you would use a stub file like this:
 
 ```java
-package java.security;
+package javax.crypto.spec;
 
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 

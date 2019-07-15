@@ -1,0 +1,41 @@
+// This stub file contains examples of some libraries that probably shouldn't have constants
+// passed to them, from the JDK.
+
+package java.security;
+
+import org.checkerframework.checker.noliteral.qual.NonConstant;
+
+class KeyStore {
+    // TODO: add other KeyStore methods?
+    void load(InputStream stream, @NonConstant char[] password);
+    void store(OutputStream stream, @NonConstant char[] password);
+}
+
+class SecureRandom {
+    SecureRandom(@NonConstant byte[] seed);
+    void setSeed(@NonConstant byte[] seed);
+    void setSeed(@NonConstant long seed);
+}
+
+package javax.crypto.spec;
+
+class PBEKeySpec {
+    PBEKeySpec(@NonConstant char[] password);
+    PBEKeySpec(@NonConstant char[] password, byte[] salt, int iterationCount);
+    PBEKeySpec(@NonConstant char[] password, byte[] salt, int iterationCount, int keyLength);
+}
+
+class PBEParameterSpec {
+    PBEParameterSpec(@NonConstant byte[] salt, int iterationCount);
+    PBEParameterSpec(@NonConstant byte[] salt, int iterationCount, AlgorithmParameterSpec paramSpec);
+}
+
+class IvParameterSpec {
+    IvParameterSpec(@NonConstant byte[] iv);
+    IvParameterSpec(@NonConstant byte[] iv, int offset, int len);
+}
+
+class SecretKeySpec {
+    SecretKeySpec(@NonConstant byte[] key, String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, int offset, int len, String algorithm);
+}
