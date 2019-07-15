@@ -1,14 +1,10 @@
 package org.checkerframework.checker.noliteral;
 
-import com.sun.source.tree.NewClassTree;
 import javax.lang.model.element.AnnotationMirror;
 import org.checkerframework.checker.noliteral.qual.MaybeConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
-import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.AnnotationBuilder;
 
 /**
@@ -31,11 +27,6 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     this.postInit();
   }
 
-  @Override
-  public TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(super.createTreeAnnotator(), new NoLiteralTreeAnnotator(this));
-  }
-
   public AnnotationMirror getCanonicalBottomAnnotation() {
     return NON_CONSTANT;
   }
@@ -44,19 +35,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return MAYBE_CONSTANT;
   }
 
-  private class NoLiteralTreeAnnotator extends TreeAnnotator {
-    public NoLiteralTreeAnnotator(NoLiteralAnnotatedTypeFactory atypeFactory) {
-      super(atypeFactory);
-    }
-
-    /**
-     * The default for new objects should be @NonConstant, because this checker is only interested
-     * in primitive and String literals.
-     */
-    @Override
-    public Void visitNewClass(NewClassTree tree, AnnotatedTypeMirror type) {
-      type.replaceAnnotation(NON_CONSTANT);
-      return super.visitNewClass(tree, type);
-    }
+  @Override
+  protected void checkInvalidOptionsInferSignatures() {
+    // Do nothing, and don't call super() because it will throw an error we don't want.
   }
 }

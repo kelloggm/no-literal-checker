@@ -7,10 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.framework.type.TypeHierarchy;
 
@@ -150,5 +152,14 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
       final AnnotatedTypeMirror methodCallReceiver) {
 
     return true;
+  }
+
+  @Override
+  protected void checkConstructorResult(
+      AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {
+    // Skip this and do nothing. Normally, this method will issue a warning when
+    // the type of a class defaults to something other than top. That's fine
+    // for this checker, because we don't expect user-written classes to take
+    // on values other than @NonConstant.
   }
 }
