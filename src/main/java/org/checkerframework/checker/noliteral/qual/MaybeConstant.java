@@ -31,6 +31,6 @@ import org.checkerframework.framework.qual.TypeUseLocation;
   LiteralKind.LONG,
   LiteralKind.STRING
 })
-@DefaultInUncheckedCodeFor({TypeUseLocation.PARAMETER, TypeUseLocation.LOWER_BOUND})
+@DefaultInUncheckedCodeFor({TypeUseLocation.PARAMETER})
 @SubtypeOf({})
 public @interface MaybeConstant {}
