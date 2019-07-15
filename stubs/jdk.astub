@@ -3,12 +3,12 @@
 
 package java.security;
 
-import org.checkerframework.checker.noliteral.qual.NonConstant;
+import org.checkerframework.checker.noliteral.qual.*;
 
 class KeyStore {
     // TODO: add other KeyStore methods?
-    void load(InputStream stream, @NonConstant char[] password);
-    void store(OutputStream stream, @NonConstant char[] password);
+    void load(@MaybeConstant InputStream stream, @NonConstant char[] password);
+    void store(@MaybeConstant OutputStream stream, @NonConstant char[] password);
 }
 
 class SecureRandom {
@@ -21,21 +21,21 @@ package javax.crypto.spec;
 
 class PBEKeySpec {
     PBEKeySpec(@NonConstant char[] password);
-    PBEKeySpec(@NonConstant char[] password, byte[] salt, int iterationCount);
-    PBEKeySpec(@NonConstant char[] password, byte[] salt, int iterationCount, int keyLength);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeConstant int iterationCount);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeConstant int iterationCount, @MaybeConstant int keyLength);
 }
 
 class PBEParameterSpec {
-    PBEParameterSpec(@NonConstant byte[] salt, int iterationCount);
-    PBEParameterSpec(@NonConstant byte[] salt, int iterationCount, AlgorithmParameterSpec paramSpec);
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeConstant int iterationCount);
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeConstant int iterationCount, @MaybeConstant AlgorithmParameterSpec paramSpec);
 }
 
 class IvParameterSpec {
     IvParameterSpec(@NonConstant byte[] iv);
-    IvParameterSpec(@NonConstant byte[] iv, int offset, int len);
+    IvParameterSpec(@NonConstant byte[] iv, @MaybeConstant int offset, @MaybeConstant int len);
 }
 
 class SecretKeySpec {
-    SecretKeySpec(@NonConstant byte[] key, String algorithm);
-    SecretKeySpec(@NonConstant byte[] key, int offset, int len, String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, @MaybeConstant String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, @MaybeConstant int offset, @MaybeConstant int len, @MaybeConstant String algorithm);
 }

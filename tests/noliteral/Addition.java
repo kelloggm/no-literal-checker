@@ -1,3 +1,6 @@
+// This test checks that expressions with constant subexpressions are
+// possibly constant.
+
 import org.checkerframework.checker.noliteral.qual.*;
 
 class Addition {

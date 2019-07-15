@@ -1,3 +1,7 @@
+// This test enforces that arrays with constant elements are
+// treated as possibly constant, and that non-constant arrays
+// cannot have constants assigned into any of their subparts.
+
 import org.checkerframework.checker.noliteral.qual.*;
 
 class ArrayParts {
