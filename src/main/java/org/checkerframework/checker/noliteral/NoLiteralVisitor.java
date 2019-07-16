@@ -61,29 +61,6 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * This is a bit of a hack. This method controls whether the {@link
-   * org.checkerframework.common.basetype.BaseTypeValidator} actually issues type.invalid errors,
-   * and is typically guarded by a subtyping check. I disabled it here because the framework doesn't
-   * provide a way to specify defaults on type declarations.
-   *
-   * @see <a
-   *     href="https://groups.google.com/forum/#!msg/checker-framework-dev/vk2V6ZFKPLk/v3hENw-e7gsJ">
-   *     this discussion</a>
-   *     <p>Stolen shamelessly from https://github.com/awslabs/data-classification-checker
-   * @param declarationType the declared type
-   * @param useType the used type
-   * @param tree the context
-   * @return always true, following the standard practice for type systems whose default is bottom
-   */
-  @Override
-  public boolean isValidUse(
-      final AnnotatedTypeMirror.AnnotatedDeclaredType declarationType,
-      final AnnotatedTypeMirror.AnnotatedDeclaredType useType,
-      final Tree tree) {
-    return true;
-  }
-
-  /**
    * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
    * are found. Stolen shamelessly from https://github.com/awslabs/data-classification-checker
    *
