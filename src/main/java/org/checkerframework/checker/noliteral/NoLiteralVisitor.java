@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
+import org.checkerframework.checker.noliteral.qual.MaybeConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
@@ -15,6 +16,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.framework.type.TypeHierarchy;
+import org.checkerframework.javacutil.ElementUtils;
 
 /**
  * This visitor has a lot of code in it that permits this type system to operate as expected with
@@ -161,5 +163,91 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
     // the type of a class defaults to something other than top. That's fine
     // for this checker, because we don't expect user-written classes to take
     // on values other than @NonConstant.
+  }
+
+  /**
+   * The standard override checker is replaced so that no override.param.invalid errors are issued
+   * when overriding methods defined in bytecode (which therefore use a different, incompatible
+   * defaulting scheme).
+   */
+  @Override
+  protected OverrideChecker createOverrideChecker(
+      Tree overriderTree,
+      AnnotatedExecutableType overrider,
+      AnnotatedTypeMirror overridingType,
+      AnnotatedTypeMirror overridingReturnType,
+      AnnotatedExecutableType overridden,
+      AnnotatedTypeMirror.AnnotatedDeclaredType overriddenType,
+      AnnotatedTypeMirror overriddenReturnType) {
+    return new NoLiteralOverrideChecker(
+        overriderTree,
+        overrider,
+        overridingType,
+        overridingReturnType,
+        overridden,
+        overriddenType,
+        overriddenReturnType);
+  }
+
+  private class NoLiteralOverrideChecker extends OverrideChecker {
+    /**
+     * Create an OverrideChecker.
+     *
+     * <p>Notice that the return types are passed in separately. This is to support some types of
+     * method references where the overrider's return type is not the appropriate type to check.
+     *
+     * @param overriderTree the AST node of the overriding method or method reference
+     * @param overrider the type of the overriding method
+     * @param overridingType the type enclosing the overrider method, usually an
+     *     AnnotatedDeclaredType; for Method References may be something else
+     * @param overridingReturnType the return type of the overriding method
+     * @param overridden the type of the overridden method
+     * @param overriddenType the declared type enclosing the overridden method
+     * @param overriddenReturnType the return type of the overridden method
+     */
+    public NoLiteralOverrideChecker(
+        Tree overriderTree,
+        AnnotatedExecutableType overrider,
+        AnnotatedTypeMirror overridingType,
+        AnnotatedTypeMirror overridingReturnType,
+        AnnotatedExecutableType overridden,
+        AnnotatedTypeMirror.AnnotatedDeclaredType overriddenType,
+        AnnotatedTypeMirror overriddenReturnType) {
+      super(
+          overriderTree,
+          overrider,
+          overridingType,
+          overridingReturnType,
+          overridden,
+          overriddenType,
+          overriddenReturnType);
+    }
+
+    @Override
+    public boolean checkOverride() {
+      if (ElementUtils.isElementFromByteCode(overridden.getElement())) {
+        boolean[] replaced = new boolean[overridden.getParameterTypes().size()];
+        List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
+        for (int i = 0; i < paramTypes.size(); i++) {
+          AnnotatedTypeMirror paramType = paramTypes.get(i);
+          if (paramType.getAnnotation(MaybeConstant.class) != null) {
+            paramType.replaceAnnotation(atypeFactory.getCanonicalBottomAnnotation());
+            replaced[i] = true;
+          } else {
+            replaced[i] = false;
+          }
+        }
+        boolean result = super.checkOverride();
+        for (int i = 0; i < paramTypes.size(); i++) {
+          if (replaced[i]) {
+            AnnotatedTypeMirror paramType = paramTypes.get(i);
+            paramType.replaceAnnotation(atypeFactory.getCanonicalTopAnnotation());
+          }
+        }
+        return result;
+      } else {
+        return super.checkOverride();
+      }
+    }
   }
 }
