@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id "com.diffplug.gradle.spotless" version "3.23.0"
+    id "com.diffplug.gradle.spotless" version "3.27.1"
 }
 
 repositories {
@@ -14,11 +14,11 @@ sourceCompatibility = 1.8
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-    implementation 'org.checkerframework:checker:2.9.0'
+    implementation 'org.checkerframework:checker:3.1.1'
 
     // Testing
     testImplementation 'junit:junit:4.12'
-    testCompile 'org.checkerframework:testlib:2.5.4'
+    testCompile 'org.checkerframework:framework-test:3.1.1'
 }
 
 tasks.withType(JavaCompile).all {
