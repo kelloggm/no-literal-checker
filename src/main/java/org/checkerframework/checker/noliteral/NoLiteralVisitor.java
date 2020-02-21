@@ -69,6 +69,11 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    * @return true if the type or any of its components has a non-default annotation
    */
   private boolean hasNonDefault(final AnnotatedTypeMirror atm) {
+
+    if (!atm.hasAnnotation(NonConstant.class)) {
+      return true;
+    }
+
     boolean result = false;
     switch (atm.getKind()) {
       case DECLARED:
@@ -76,7 +81,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
             (AnnotatedTypeMirror.AnnotatedDeclaredType) atm;
         for (AnnotatedTypeMirror component : atmD.getTypeArguments()) {
           if (hasNonDefault(component)) {
-            result = true;
+            return true;
           }
         }
         break;
@@ -91,7 +96,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
       default:
         break;
     }
-    return result || !atm.hasAnnotation(NonConstant.class);
+    return result;
   }
 
   /**
