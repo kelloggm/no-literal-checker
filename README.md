@@ -55,7 +55,7 @@ package javax.crypto.spec;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 
 class SecretKeySpec {
-    SecretKeySpec(@NonConstant byte [] key, String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, String algorithm);
     SecretKeySpec(@NonConstant byte[] key, int offset, int len, String algorithm);
 }
 ```
