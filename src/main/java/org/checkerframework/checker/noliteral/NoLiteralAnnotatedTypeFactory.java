@@ -8,9 +8,7 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.javacutil.AnnotationBuilder;
 
 /**
- * The type factory for the no literal checker. It doesn't do much: all it provides are some
- * canonical annotations. If we want to change this checker so that it uses the Value Checker for
- * defaulting, we would do it here.
+ * The type factory for the no literal checker.
  */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
