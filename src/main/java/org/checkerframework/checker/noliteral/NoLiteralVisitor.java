@@ -146,7 +146,6 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
       final MethodInvocationTree node,
       final AnnotatedTypeMirror methodDefinitionReceiver,
       final AnnotatedTypeMirror methodCallReceiver) {
-
     return true;
   }
 
@@ -219,6 +218,8 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
 
     @Override
     public boolean checkOverride() {
+      // Don't issue override errors if the overridden method was defined
+      // in bytecode, which uses a different defaulting scheme.
       if (ElementUtils.isElementFromByteCode(overridden.getElement())) {
         boolean[] replaced = new boolean[overridden.getParameterTypes().size()];
         List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
