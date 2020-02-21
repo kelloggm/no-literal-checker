@@ -62,3 +62,12 @@ class SecretKeySpec {
 
 For more about stub files, see the 
 [Checker Framework manual section](https://checkerframework.org/manual/#stub).
+
+### Using the checker on your own code
+
+See the [Checker Framework manual section](https://checkerframework.org/manual/#external-tools)
+on integration with external tools.
+
+Due to the high annotation burden imposed by this checker, it is recommended that you
+run the checker using a type inference tool, such as 
+[whole-program inference](https://checkerframework.org/manual/#type-inference).
