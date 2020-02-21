@@ -7,8 +7,11 @@ import org.checkerframework.framework.source.SuppressWarningsKeys;
 public class NoLiteralChecker extends BaseTypeChecker {
 
   /**
-   * Overridden so that unchecked code defaults are always used for bytecode, because we only want
-   * to enforce @NonConstant if a stub file is present.
+   * In source code, the default type is {@code @NonConstant}. For bytecode,
+   * however, the checker should only warn about sinks that were explicitly
+   * specified in stub files. Therefore, the checker uses optimistic defaulting
+   * for bytecode, so that the default for parameters on classes derived from
+   * bytecode is {@code @MaybeDerivedFromConstant}.
    */
   @Override
   public boolean useUncheckedCodeDefault(String kindOfCode) {
