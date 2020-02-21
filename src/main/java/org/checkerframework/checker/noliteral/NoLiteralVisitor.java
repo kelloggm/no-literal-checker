@@ -16,6 +16,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.framework.type.TypeHierarchy;
+import org.checkerframework.framework.type.visitor.AnnotatedTypeScanner;
 import org.checkerframework.javacutil.ElementUtils;
 
 /**
@@ -63,40 +64,43 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
 
   /**
    * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
-   * are found. Stolen shamelessly from https://github.com/awslabs/data-classification-checker
+   * are found.
+   *
+   * <p>Usage: NonDefaultScanner scanner = new NonDefaultScanner(); scanner.visit(type); boolean
+   * result = scanner.getResult();
+   */
+  private class NonDefaultScanner extends AnnotatedTypeScanner<Void, Void> {
+
+    private boolean result = false;
+
+    /**
+     * After calling visit(), this will return whether or not the visited type(s) have
+     * any non default annotations.
+     */
+    public boolean getResult() {
+      return result;
+    }
+
+    @Override
+    protected Void scan(AnnotatedTypeMirror type, Void aVoid) {
+      if (!type.hasAnnotation(NonConstant.class)) {
+        result = true;
+      }
+      return super.scan(type, aVoid);
+    }
+  }
+
+  /**
+   * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
+   * are found.
    *
    * @param atm the type to search
    * @return true if the type or any of its components has a non-default annotation
    */
   private boolean hasNonDefault(final AnnotatedTypeMirror atm) {
-
-    if (!atm.hasAnnotation(NonConstant.class)) {
-      return true;
-    }
-
-    boolean result = false;
-    switch (atm.getKind()) {
-      case DECLARED:
-        AnnotatedTypeMirror.AnnotatedDeclaredType atmD =
-            (AnnotatedTypeMirror.AnnotatedDeclaredType) atm;
-        for (AnnotatedTypeMirror component : atmD.getTypeArguments()) {
-          if (hasNonDefault(component)) {
-            return true;
-          }
-        }
-        break;
-      case ARRAY:
-        AnnotatedTypeMirror.AnnotatedArrayType atmA = (AnnotatedTypeMirror.AnnotatedArrayType) atm;
-        result = hasNonDefault(atmA.getComponentType());
-        break;
-      case WILDCARD:
-        return false;
-      case TYPEVAR:
-        return false;
-      default:
-        break;
-    }
-    return result;
+    NonDefaultScanner scanner = new NonDefaultScanner();
+    scanner.visit(atm);
+    return scanner.getResult();
   }
 
   /**
