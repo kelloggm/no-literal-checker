@@ -107,7 +107,13 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    * This checker defaults implicit upper bounds of type variables to @NonConstant. This is the
    * correct thing to do in unannotated code, but causes false positive errors whenever a user
    * writes a type annotation on the upper bound of a type variable (for instance, by declaring a
-   * list of constant strings). Since this is common, this code disables that check for user-written
+   * list of constant strings).
+   *
+   * For example, without overriding this method, this code would not typecheck:
+   *
+   * {@code List<@MaybeDerivedFromConstant String> list = new ArrayList<>();}
+   *
+   * Since this is common, this code disables that check for user-written
    * annotations. Stolen shamelessly from https://github.com/awslabs/data-classification-checker
    */
   @Override
@@ -131,8 +137,8 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * Skip the standard subtyping check on method calls always. Constants can't have methods called
-   * on them, so we don't care.
+   * Skip the standard subtyping check on receivers on all method calls. 
+   * Constants can't have methods called on them, so it doesn't matter.
    */
   @Override
   protected boolean skipReceiverSubtypeCheck(
