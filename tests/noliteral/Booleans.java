@@ -13,7 +13,7 @@ class Booleans {
 
         @NonConstant boolean b = false;
         @NonConstant boolean a = true;
-        @MaybeConstant boolean c = false;
-        @MaybeConstant boolean d = true;
+        @MaybeDerivedFromConstant boolean c = false;
+        @MaybeDerivedFromConstant boolean d = true;
     }
 }

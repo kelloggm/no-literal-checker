@@ -3,7 +3,7 @@
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.checkerframework.checker.noliteral.qual.MaybeConstant;
+import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 
 public class SecretKeySpecTestUnnannotated {
 

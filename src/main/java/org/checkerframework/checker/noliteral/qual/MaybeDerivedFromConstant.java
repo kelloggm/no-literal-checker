@@ -11,14 +11,10 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
 /**
- * The top type for the NoLiteral Checker's type system.
- *
- * <p>This type represents an expression that might contain a literal, like 5 or {0xa, 0xb}. It is
- * inferred for all manifest literals in the program.
- *
- * <p>This is also the type of any expression that contains a subexpression that may be a constant.
- * For example, the type of <code>"hello" + x</code>, where <code>x</code> is a non-constant String,
- * is <code>@MaybeConstant String</code>.
+ * This type represents an expression that may have been derived from literal, like 5 or {0xa, 0xb}.
+ * This is also the type of any expression that contains a subexpression that may be a constant. For
+ * example, the type of <code>"hello" + x</code>, where <code>x</code> is a non-constant String, is
+ * <code>@MaybeDerivedFromConstant String</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
@@ -33,4 +29,4 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 })
 @DefaultInUncheckedCodeFor({TypeUseLocation.PARAMETER})
 @SubtypeOf({})
-public @interface MaybeConstant {}
+public @interface MaybeDerivedFromConstant {}

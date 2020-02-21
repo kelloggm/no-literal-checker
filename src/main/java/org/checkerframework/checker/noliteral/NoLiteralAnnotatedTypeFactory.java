@@ -1,7 +1,7 @@
 package org.checkerframework.checker.noliteral;
 
 import javax.lang.model.element.AnnotationMirror;
-import org.checkerframework.checker.noliteral.qual.MaybeConstant;
+import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -16,7 +16,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /** The canonical maybe-constant annotation */
   private final AnnotationMirror MAYBE_CONSTANT =
-      AnnotationBuilder.fromClass(elements, MaybeConstant.class);
+      AnnotationBuilder.fromClass(elements, MaybeDerivedFromConstant.class);
 
   /** The canonical non-constant annotation */
   private final AnnotationMirror NON_CONSTANT =

@@ -17,7 +17,7 @@ class ArrayParts {
     }
 
     void test3() {
-        @MaybeConstant int[] key = {1, 2, 3};
+        @MaybeDerivedFromConstant int[] key = {1, 2, 3};
         // :: error: argument.type.incompatible
         test(key);
     }

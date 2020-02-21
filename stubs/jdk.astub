@@ -7,8 +7,8 @@ import org.checkerframework.checker.noliteral.qual.*;
 
 class KeyStore {
     // TODO: add other KeyStore methods?
-    void load(@MaybeConstant InputStream stream, @NonConstant char[] password);
-    void store(@MaybeConstant OutputStream stream, @NonConstant char[] password);
+    void load(@MaybeDerivedFromConstant InputStream stream, @NonConstant char[] password);
+    void store(@MaybeDerivedFromConstant OutputStream stream, @NonConstant char[] password);
 }
 
 class SecureRandom {
@@ -21,21 +21,21 @@ package javax.crypto.spec;
 
 class PBEKeySpec {
     PBEKeySpec(@NonConstant char[] password);
-    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeConstant int iterationCount);
-    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeConstant int iterationCount, @MaybeConstant int keyLength);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount, @MaybeDerivedFromConstant int keyLength);
 }
 
 class PBEParameterSpec {
-    PBEParameterSpec(@NonConstant byte[] salt, @MaybeConstant int iterationCount);
-    PBEParameterSpec(@NonConstant byte[] salt, @MaybeConstant int iterationCount, @MaybeConstant AlgorithmParameterSpec paramSpec);
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount);
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount, @MaybeDerivedFromConstant AlgorithmParameterSpec paramSpec);
 }
 
 class IvParameterSpec {
     IvParameterSpec(@NonConstant byte[] iv);
-    IvParameterSpec(@NonConstant byte[] iv, @MaybeConstant int offset, @MaybeConstant int len);
+    IvParameterSpec(@NonConstant byte[] iv, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int len);
 }
 
 class SecretKeySpec {
-    SecretKeySpec(@NonConstant byte[] key, @MaybeConstant String algorithm);
-    SecretKeySpec(@NonConstant byte[] key, @MaybeConstant int offset, @MaybeConstant int len, @MaybeConstant String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, @MaybeDerivedFromConstant String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int len, @MaybeDerivedFromConstant String algorithm);
 }

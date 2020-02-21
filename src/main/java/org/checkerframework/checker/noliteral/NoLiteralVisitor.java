@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
-import org.checkerframework.checker.noliteral.qual.MaybeConstant;
+import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
@@ -53,7 +53,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    *
    * <p>Stolen shamelessly from https://github.com/awslabs/data-classification-checker
    *
-   * @return a singleton set containing the @MaybeConstant annotation
+   * @return a singleton set containing the @MaybeDerivedFromConstant annotation
    */
   @Override
   protected Set<? extends AnnotationMirror> getThrowUpperBoundAnnotations() {
@@ -207,7 +207,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
         List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
         for (int i = 0; i < paramTypes.size(); i++) {
           AnnotatedTypeMirror paramType = paramTypes.get(i);
-          if (paramType.getAnnotation(MaybeConstant.class) != null) {
+          if (paramType.getAnnotation(MaybeDerivedFromConstant.class) != null) {
             paramType.replaceAnnotation(atypeFactory.getCanonicalBottomAnnotation());
             replaced[i] = true;
           } else {

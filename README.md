@@ -1,8 +1,8 @@
 ### No Literal Checker
 
-A typechecker for proving that no literal values can flow to specified APIs in
-a Java codebase. Useful for enforcing security and compliance rules like 
-"do not hard-code credentials".
+This checker proves that no literal or literal-derived values can flow to 
+specified APIs in a Java codebase. Useful for enforcing security and compliance 
+rules like "do not hard-code credentials".
 
 ### What problem does this solve?
 
@@ -13,19 +13,19 @@ hard-coded constant.
 
 ### How does it work?
 
-The checker is built on the [Checker Framework](checkerframework.org).
-
-The type system is:
+The checker computes a forward slice from each manifest literal in the program
+to all values derived from it. Each expression in the program receives one of
+these two types:
 
 ```java
-@MaybeConstant
+@MaybeDerivedFromConstant
       |
  @NonConstant
 ```
 
 The default is `@NonConstant` for all expressions except manifest literals (examples
 of manifest literals include `1`, `"hello"`, and `{0xa, 0xb}`). That default includes
-method parameters, so a user should expect to need to write an annotation on the defintion
+method parameters, so a user should expect to need to write an annotation on the definition
 of any method that is called with a constant argument. For example, if your code includes
 the call:
 ```java
@@ -33,20 +33,20 @@ foo(5);
 ```
 then the defintion of `foo` will need to be annotated like so:
 ```java
-void foo(@MaybeConstant int x) { }
+void foo(@MaybeDerivedFromConstant int x) { }
 ```
 
-The default is slightly different in unchecked code (that is, code for which
+The default is different in unchecked code (that is, code for which
 only the bytecode is available, such as code from a `.jar` file). The following
 optimistic defaulting rules are applied:
 * the return type of any function defined in a library is `@NonConstant`
-* the types of a libraries' formal parameters are always `@MaybeConstant` unless
+* the types of a libraries' formal parameters are always `@MaybeDerivedFromConstant` unless
 a stub file is supplied that overwrites this default
 
 As a consequence of these rules, users MUST always write stub files for libraries
 they intend to protect - this checker is **useless** without such a stub.
 
-For example, to enforce that calls to `javax.crypto.spec.SecretKeySpec`'s constructor
+For example, to enforce that calls to the `javax.crypto.spec.SecretKeySpec` constructor
 only ever provide non-constant keys, you would use a stub file like this:
 
 ```java

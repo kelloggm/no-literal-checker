@@ -2,11 +2,11 @@
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.checkerframework.checker.noliteral.qual.MaybeConstant;
+import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 
 public class SecretKeySpecTest {
 
-    private @MaybeConstant byte[] getKey() {
+    private @MaybeDerivedFromConstant byte[] getKey() {
         return new byte [] {0xa, 0xb};
     }
 

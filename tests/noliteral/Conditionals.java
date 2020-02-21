@@ -9,7 +9,7 @@ class Conditionals {
             x = y;
         }
 
-        @MaybeConstant int z = x;
+        @MaybeDerivedFromConstant int z = x;
 
         // :: error: assignment.type.incompatible
         @NonConstant int w = x;
@@ -18,7 +18,7 @@ class Conditionals {
     void test2(boolean b, int y) {
         int x = b ? 5 : y;
 
-        @MaybeConstant int z = x;
+        @MaybeDerivedFromConstant int z = x;
 
         // :: error: assignment.type.incompatible
         @NonConstant int w = x;
