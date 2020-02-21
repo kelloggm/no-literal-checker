@@ -14,8 +14,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 public class NoLiteralTest extends CheckerFrameworkPerDirectoryTest {
   public NoLiteralTest(List<File> testFiles) {
-    super(
-        testFiles, NoLiteralChecker.class, "noliteral", "-Anomsgtext", "-Astubs=stubs/", "-nowarn");
+    super(testFiles, NoLiteralChecker.class, "noliteral", "-Anomsgtext", "-AstubDebug", "-nowarn");
   }
 
   @Parameters
