@@ -4,7 +4,6 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.source.SuppressWarningsKeys;
 
 /** The NoLiteral Checker enforces that literals don't go where they don't belong */
-@SuppressWarningsKeys("noliteral")
 public class NoLiteralChecker extends BaseTypeChecker {
 
   /**
