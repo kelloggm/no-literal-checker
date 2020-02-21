@@ -4,7 +4,7 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.StubFiles;
 
 /** The NoLiteral Checker enforces that literals don't go where they don't belong */
-@StubFiles({"stubs/crypto.astub", "stubs/integer.astub"})
+@StubFiles({"stubs/crypto.astub", "stubs/integer.astub", "stubs/byte.astub"})
 public class NoLiteralChecker extends BaseTypeChecker {
 
   /**
