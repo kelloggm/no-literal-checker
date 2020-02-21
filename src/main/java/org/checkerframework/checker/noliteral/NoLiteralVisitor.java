@@ -43,7 +43,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    */
   @Override
   protected Set<? extends AnnotationMirror> getExceptionParameterLowerBoundAnnotations() {
-    return Collections.singleton(atypeFactory.getBottom());
+    return Collections.singleton(atypeFactory.getNonConstant());
   }
 
   /**
@@ -57,7 +57,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    */
   @Override
   protected Set<? extends AnnotationMirror> getThrowUpperBoundAnnotations() {
-    return Collections.singleton(atypeFactory.getTop());
+    return Collections.singleton(atypeFactory.getMaybeConstant());
   }
 
   /**
@@ -208,7 +208,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
         for (int i = 0; i < paramTypes.size(); i++) {
           AnnotatedTypeMirror paramType = paramTypes.get(i);
           if (paramType.getAnnotation(MaybeDerivedFromConstant.class) != null) {
-            paramType.replaceAnnotation(atypeFactory.getBottom());
+            paramType.replaceAnnotation(atypeFactory.getNonConstant());
             replaced[i] = true;
           } else {
             replaced[i] = false;
@@ -218,7 +218,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
         for (int i = 0; i < paramTypes.size(); i++) {
           if (replaced[i]) {
             AnnotatedTypeMirror paramType = paramTypes.get(i);
-            paramType.replaceAnnotation(atypeFactory.getTop());
+            paramType.replaceAnnotation(atypeFactory.getMaybeConstant());
           }
         }
         return result;

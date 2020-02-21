@@ -25,11 +25,17 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     this.postInit();
   }
 
-  public AnnotationMirror getBottom() {
+  /**
+   * @return a canonical non-constant AnnotationMirror
+   */
+  public AnnotationMirror getNonConstant() {
     return NON_CONSTANT;
   }
 
-  public AnnotationMirror getTop() {
+  /**
+   * @return a canonical maybe-constant AnnotationMirror
+   */
+  public AnnotationMirror getMaybeConstant() {
     return MAYBE_CONSTANT;
   }
 
