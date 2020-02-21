@@ -20,7 +20,7 @@ import org.checkerframework.javacutil.ElementUtils;
 
 /**
  * This visitor has a lot of code in it that permits this type system to operate as expected with
- * the bottom type as its default. Most of that code is either from or inspired by AWS' Data
+ * the bottom type as its default. Most of that code is either from or inspired by the AWS Data
  * Classification Checker (https://github.com/awslabs/data-classification-checker).
  */
 public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFactory> {
