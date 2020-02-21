@@ -27,16 +27,18 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     this.postInit();
   }
 
-  public AnnotationMirror getCanonicalBottomAnnotation() {
+  public AnnotationMirror getBottom() {
     return NON_CONSTANT;
   }
 
-  public AnnotationMirror getCanonicalTopAnnotation() {
+  public AnnotationMirror getTop() {
     return MAYBE_CONSTANT;
   }
 
   @Override
   protected void checkInvalidOptionsInferSignatures() {
-    // Do nothing, and don't call super() because it will throw an error we don't want.
+    // This checker is specifically designed to work with whole-program inference,
+    // so it can turn off the defensive check in WPI that requires certain bytecode
+    // defaulting rules. This method is therefore overwritten to do nothing.
   }
 }
