@@ -7,9 +7,7 @@ import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.javacutil.AnnotationBuilder;
 
-/**
- * The type factory for the no literal checker.
- */
+/** The type factory for the no literal checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /** The canonical maybe-constant annotation */
@@ -25,16 +23,12 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     this.postInit();
   }
 
-  /**
-   * @return a canonical non-constant AnnotationMirror
-   */
+  /** @return a canonical non-constant AnnotationMirror */
   public AnnotationMirror getNonConstant() {
     return NON_CONSTANT;
   }
 
-  /**
-   * @return a canonical maybe-constant AnnotationMirror
-   */
+  /** @return a canonical maybe-constant AnnotationMirror */
   public AnnotationMirror getMaybeConstant() {
     return MAYBE_CONSTANT;
   }

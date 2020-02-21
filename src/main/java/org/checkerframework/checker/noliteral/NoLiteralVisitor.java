@@ -33,9 +33,10 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * Overrides the default lower bound for exception parameters. By default, this is top. This
-   * prevents the checker from defaulting exception parameters to @NonConstant. Overriding this
-   * method changes the expected lower bound to be @NonConstant, permitting that default.
+   * Overrides the default lower bound for exception parameters. The usual default for exception
+   * parameter lower bounds is top, which prevents the checker from defaulting exception parameters
+   * to @NonConstant. Overriding this method changes the expected lower bound to be @NonConstant,
+   * which prevents false positives.
    *
    * <p>Stolen shamelessly from https://github.com/awslabs/data-classification-checker
    *
