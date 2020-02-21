@@ -19,8 +19,8 @@ these two types:
 
 ```java
 @MaybeDerivedFromConstant
-      |
- @NonConstant
+            |
+       @NonConstant
 ```
 
 The default is `@NonConstant` for all expressions except manifest literals (examples
@@ -40,8 +40,8 @@ The default is different in unchecked code (that is, code for which
 only the bytecode is available, such as code from a `.jar` file). The following
 optimistic defaulting rules are applied:
 * the return type of any function defined in a library is `@NonConstant`
-* the types of a libraries' formal parameters are always `@MaybeDerivedFromConstant` unless
-a stub file is supplied that overwrites this default
+* the types of a library function's formal parameters are always `@MaybeDerivedFromConstant` 
+unless a stub file is supplied that overwrites this default
 
 As a consequence of these rules, users MUST always write stub files for libraries
 they intend to protect - this checker is **useless** without such a stub.
