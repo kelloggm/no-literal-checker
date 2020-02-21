@@ -74,8 +74,8 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
     private boolean result = false;
 
     /**
-     * After calling visit(), this will return whether or not the visited type(s) have
-     * any non default annotations.
+     * After calling visit(), this will return whether or not the visited type(s) have any non
+     * default annotations.
      */
     public boolean getResult() {
       return result;
@@ -109,11 +109,12 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    * writes a type annotation on the upper bound of a type variable (for instance, by declaring a
    * list of constant strings).
    *
-   * For example, without overriding this method, this code would not typecheck:
+   * <p>For example, without overriding this method, this code would not typecheck:
    *
-   * {@code List<@MaybeDerivedFromConstant String> list = new ArrayList<>();}
+   * <p>{@code List<@MaybeDerivedFromConstant String> list = new ArrayList<>();}
    *
-   * Since this is common, this code disables that check for user-written
+   * <p>Since this is common, this code disables checking that type arguments supplied to a type or
+   * a method invocation are within the bounds of the type variables as declared for user-written
    * annotations. Stolen shamelessly from https://github.com/awslabs/data-classification-checker
    */
   @Override
@@ -137,8 +138,8 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * Skip the standard subtyping check on receivers on all method calls. 
-   * Constants can't have methods called on them, so it doesn't matter.
+   * Skip the standard subtyping check on receivers on all method calls. Constants can't have
+   * methods called on them, so it doesn't matter.
    */
   @Override
   protected boolean skipReceiverSubtypeCheck(
