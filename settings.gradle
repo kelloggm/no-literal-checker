@@ -8,3 +8,6 @@
  */
 
 rootProject.name = 'noliteral-checker'
+
+include ':no-literal-checker'
+include ':no-literal-qual'
