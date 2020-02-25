@@ -46,3 +46,9 @@ spotless {
         googleJavaFormat()
     }
 }
+
+task printClasspath {
+    doLast {
+        println sourceSets.main.runtimeClasspath.asPath
+    }
+}
