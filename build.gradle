@@ -16,7 +16,7 @@ dependencies {
     implementation 'org.checkerframework:checker:2.8.1'
 
     // Testing
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     testCompile 'org.checkerframework:testlib:2.5.4'
 }
 
