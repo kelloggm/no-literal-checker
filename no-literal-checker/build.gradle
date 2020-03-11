@@ -5,8 +5,13 @@ plugins {
 sourceCompatibility = 1.8
 
 dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
-    implementation "org.checkerframework:checker:${versions.checkerFramework}"
+    // Must use CF local because this checker depends on features that have not yet been
+    // released. TODO: update to a real CF release once it is April, 2020 or later and
+    //  typetools#2871 has been merged
+    //
+    // implementation "org.checkerframework:checker:${versions.checkerFramework}"
+    def cfHome = String.valueOf(System.getenv("CHECKERFRAMEWORK"))
+    implementation files(cfHome + "/checker/dist/checker.jar")
 
     implementation project(":no-literal-qual")
 

@@ -14,11 +14,11 @@ public class NoLiteralChecker extends BaseTypeChecker {
    * derived from bytecode is {@code @MaybeDerivedFromConstant}.
    */
   @Override
-  public boolean useUncheckedCodeDefault(String kindOfCode) {
+  public boolean useConservativeDefault(String kindOfCode) {
     if ("bytecode".equals(kindOfCode)) {
       return true;
     } else {
-      return super.useUncheckedCodeDefault(kindOfCode);
+      return super.useConservativeDefault(kindOfCode);
     }
   }
 }
