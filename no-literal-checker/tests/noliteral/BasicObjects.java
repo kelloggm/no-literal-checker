@@ -9,6 +9,15 @@ class BasicObjects {
     }
 
     @NonConstant String callToString(Object o) {
+        // toString() is often constant-derived
+        // :: error: return.type.incompatible
         return o.toString();
+    }
+
+    @NonConstant int callHashCode(Object o) {
+        // hashCode's implementation also typically involves
+        // doing math with constants
+        // :: error: return.type.incompatible
+        return o.hashCode();
     }
 }
