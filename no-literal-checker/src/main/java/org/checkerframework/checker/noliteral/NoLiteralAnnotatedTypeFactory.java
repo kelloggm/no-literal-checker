@@ -1,16 +1,11 @@
 package org.checkerframework.checker.noliteral;
 
+import com.sun.source.tree.Tree.Kind;
+import com.sun.source.tree.VariableTree;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
-
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.ParameterizedTypeTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.Tree.Kind;
-import com.sun.source.tree.TypeParameterTree;
-import com.sun.source.tree.VariableTree;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -28,8 +23,6 @@ import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.ElementUtils;
-
-import java.util.List;
 
 /** The type factory for the no literal checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
@@ -165,8 +158,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Default unannotated type variables to @MaybeConstant, because
-   * it is desirable to assume the worst about e.g. Lists of Strings.
+   * Default unannotated type variables to @MaybeConstant, because it is desirable to assume the
+   * worst about e.g. Lists of Strings.
    */
   private class NoLiteralTypeAnnotator extends TypeAnnotator {
     public NoLiteralTypeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
@@ -185,8 +178,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Default unannotated type variables in local variable declarations to @MaybeConstant, because
-   * it is desirable to assume the worst about e.g. Lists of Strings.
+   * Default unannotated type variables in local variable declarations to @MaybeConstant, because it
+   * is desirable to assume the worst about e.g. Lists of Strings.
    */
   private class NoLiteralTreeAnnotator extends TreeAnnotator {
     public NoLiteralTreeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
