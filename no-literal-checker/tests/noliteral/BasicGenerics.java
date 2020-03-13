@@ -17,4 +17,9 @@ class BasicGenerics {
     void test2() {
         List<Object[]> list = new ArrayList();
     }
+
+    void testConstantList() {
+        List<String> list = new ArrayList();
+        list.add("foo");
+    }
 }

@@ -4,6 +4,13 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
+
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.ParameterizedTypeTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
+import com.sun.source.tree.TypeParameterTree;
+import com.sun.source.tree.VariableTree;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -12,9 +19,17 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedTypeVariable;
+import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.ElementUtils;
+
+import java.util.List;
 
 /** The type factory for the no literal checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
@@ -40,6 +55,16 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** @return a canonical maybe-constant AnnotationMirror */
   public AnnotationMirror getMaybeConstant() {
     return MAYBE_CONSTANT;
+  }
+
+  @Override
+  protected TypeAnnotator createTypeAnnotator() {
+    return new ListTypeAnnotator(new NoLiteralTypeAnnotator(this), super.createTypeAnnotator());
+  }
+
+  @Override
+  protected TreeAnnotator createTreeAnnotator() {
+    return new ListTreeAnnotator(new NoLiteralTreeAnnotator(this), super.createTreeAnnotator());
   }
 
   @Override
@@ -137,5 +162,48 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // This checker is specifically designed to work with whole-program inference,
     // so it can turn off the defensive check in WPI that requires certain bytecode
     // defaulting rules. This method is therefore overwritten to do nothing.
+  }
+
+  /**
+   * Default unannotated type variables to @MaybeConstant, because
+   * it is desirable to assume the worst about e.g. Lists of Strings.
+   */
+  private class NoLiteralTypeAnnotator extends TypeAnnotator {
+    public NoLiteralTypeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
+      super(factory);
+    }
+
+    @Override
+    public Void visitTypeVariable(AnnotatedTypeVariable type, Void aVoid) {
+
+      if (!type.hasExplicitAnnotation(NON_CONSTANT)) {
+        type.replaceAnnotation(MAYBE_CONSTANT);
+      }
+
+      return super.visitTypeVariable(type, aVoid);
+    }
+  }
+
+  /**
+   * Default unannotated type variables in local variable declarations to @MaybeConstant, because
+   * it is desirable to assume the worst about e.g. Lists of Strings.
+   */
+  private class NoLiteralTreeAnnotator extends TreeAnnotator {
+    public NoLiteralTreeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
+      super(factory);
+    }
+
+    @Override
+    public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+      if (node.getType().getKind() == Kind.PARAMETERIZED_TYPE) {
+        AnnotatedDeclaredType asDeclared = (AnnotatedDeclaredType) annotatedTypeMirror;
+        for (AnnotatedTypeMirror atm : asDeclared.getTypeArguments()) {
+          if (!atm.hasExplicitAnnotation(NON_CONSTANT)) {
+            atm.replaceAnnotation(MAYBE_CONSTANT);
+          }
+        }
+      }
+      return super.visitVariable(node, annotatedTypeMirror);
+    }
   }
 }
