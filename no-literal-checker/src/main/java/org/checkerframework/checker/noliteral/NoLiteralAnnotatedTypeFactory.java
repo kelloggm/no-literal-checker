@@ -2,6 +2,7 @@ package org.checkerframework.checker.noliteral;
 
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
+import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
@@ -15,6 +16,7 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedTypeVariable;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
@@ -174,6 +176,27 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       }
 
       return super.visitTypeVariable(type, aVoid);
+    }
+
+    /**
+     * Default type variables in return types of user-written methods to MaybeConstant, for
+     * consistency with other defaulting of type variables.
+     */
+    @Override
+    public Void visitExecutable(AnnotatedExecutableType method, Void aVoid) {
+      AnnotatedTypeMirror returnType = method.getReturnType();
+      if (returnType != null && returnType.getKind() == TypeKind.DECLARED) {
+        AnnotatedDeclaredType asDeclared = (AnnotatedDeclaredType) returnType;
+        List<? extends AnnotatedTypeMirror> typeArgs = asDeclared.getTypeArguments();
+        if (typeArgs.size() > 0) {
+          for (AnnotatedTypeMirror typeArg : typeArgs) {
+            if (!typeArg.hasExplicitAnnotation(NON_CONSTANT)) {
+              typeArg.replaceAnnotation(MAYBE_CONSTANT);
+            }
+          }
+        }
+      }
+      return super.visitExecutable(method, aVoid);
     }
   }
 

@@ -22,4 +22,16 @@ class BasicGenerics {
         List<String> list = new ArrayList();
         list.add("foo");
     }
+
+    void testListFromBytecode() {
+        List<String> list0 = Collections.emptyList();
+    }
+
+    void testListFromUnannotatedMethod() {
+        List<String> list = getList();
+    }
+
+    List<String> getList() {
+        return Collections.emptyList();
+    }
 }
