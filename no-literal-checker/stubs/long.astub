@@ -1,0 +1,106 @@
+package java.lang;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+public final class Long extends Number implements Comparable<Long> {
+
+    @Native public static final @MaybeDerivedFromConstant long MIN_VALUE = 0x8000000000000000L;
+
+    @Native public static final @MaybeDerivedFromConstant long MAX_VALUE = 0x7fffffffffffffffL;
+
+    public static @PolyConstant String toString(@PolyConstant long i, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant String toUnsignedString(@PolyConstant long i, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant String toHexString(@PolyConstant long i);
+
+    public static @PolyConstant String toOctalString(@PolyConstant long i);
+
+    public static @PolyConstant String toBinaryString(@PolyConstant long i);
+
+    public static @PolyConstant String toString(@PolyConstant long i);
+
+    public static @PolyConstant String toUnsignedString(@PolyConstant long i);
+
+    public static @PolyConstant long parseLong(@PolyConstant String s, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant long parseLong(@PolyConstant String s);
+
+    public static @PolyConstant long parseUnsignedLong(@PolyConstant String s, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant long parseUnsignedLong(@PolyConstant String s);
+
+    public static @PolyConstant Long valueOf(@PolyConstant String s, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant Long valueOf(@PolyConstant String s);
+
+    public static @PolyConstant Long valueOf(@PolyConstant long l);
+
+    public static @PolyConstant Long decode(@PolyConstant String nm);
+
+    public @PolyConstant Long(@PolyConstant long value);
+
+    public @PolyConstant Long(@PolyConstant String s);
+
+    public @PolyConstant byte byteValue(@PolyConstant Long this);
+
+    public @PolyConstant short shortValue(@PolyConstant Long this);
+
+    public @PolyConstant int intValue(@PolyConstant Long this);
+
+    public @PolyConstant long longValue(@PolyConstant Long this);
+
+    public @PolyConstant float floatValue(@PolyConstant Long this);
+
+    public @PolyConstant double doubleValue(@PolyConstant Long this);
+
+    public @PolyConstant String toString(@PolyConstant Long this);
+
+    public @PolyConstant int hashCode(@PolyConstant Long this);
+
+    public static @PolyConstant int hashCode(@PolyConstant long value);
+
+    public @PolyConstant int compareTo(@PolyConstant Long this, @PolyConstant Long anotherLong);
+
+    public static @PolyConstant int compare(@PolyConstant long x, @PolyConstant long y);
+
+    public static @PolyConstant int compareUnsigned(@PolyConstant long x, @PolyConstant long y);
+
+    public static @PolyConstant long divideUnsigned(@PolyConstant long dividend, @PolyConstant long divisor);
+
+    public static @PolyConstant long remainderUnsigned(@PolyConstant long dividend, @PolyConstant long divisor);
+
+    @Native public static final @MaybeDerivedFromConstant int SIZE = 64;
+
+    public static final @MaybeDerivedFromConstant int BYTES = SIZE / Byte.SIZE;
+
+    // Technically the following five methods aren't constants, but they uniformly return numbers in a small set
+    // that would make their use in e.g. a cryptographic key environment unsuitable, so I've annotated
+    // them as if the result is constant.
+
+    public static @MaybeDerivedFromConstant long highestOneBit(@MaybeDerivedFromConstant long i);
+
+    public static @MaybeDerivedFromConstant long lowestOneBit(@MaybeDerivedFromConstant long i);
+
+    public static @MaybeDerivedFromConstant int numberOfLeadingZeros(@MaybeDerivedFromConstant long i);
+
+    public static @MaybeDerivedFromConstant int numberOfTrailingZeros(@MaybeDerivedFromConstant long i);
+
+    public static @MaybeDerivedFromConstant int bitCount(@MaybeDerivedFromConstant long i);
+
+    public static @PolyConstant long rotateLeft(@PolyConstant long i, @MaybeDerivedFromConstant int distance);
+
+    public static @PolyConstant long rotateRight(@PolyConstant long i, @MaybeDerivedFromConstant int distance);
+
+    public static @PolyConstant long reverse(@PolyConstant long i);
+
+    public static @MaybeDerivedFromConstant int signum(@MaybeDerivedFromConstant long i);
+
+    public static @PolyConstant long reverseBytes(@PolyConstant long i);
+
+    public static @PolyConstant long sum(@PolyConstant long a, @PolyConstant long b);
+
+    public static @PolyConstant long max(@PolyConstant long a, @PolyConstant long b);
+
+    public static @PolyConstant long min(@PolyConstant long a, @PolyConstant long b);
+}

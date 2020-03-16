@@ -1,0 +1,51 @@
+package java.lang;
+import org.checkerframework.checker.noliteral.qual.*;
+
+public final class Short extends Number implements Comparable<Short> {
+
+    public static final @MaybeDerivedFromConstant short MIN_VALUE = -32768;
+
+    public static final @MaybeDerivedFromConstant short MAX_VALUE = 32767;
+
+    public static @PolyConstant String toString(@PolyConstant short s);
+
+    public static @PolyConstant short parseShort(@PolyConstant String s, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant short parseShort(@PolyConstant String s);
+
+    public static @PolyConstant Short valueOf(@PolyConstant String s, @MaybeDerivedFromConstant int radix);
+
+    public static @PolyConstant Short valueOf(String s);
+
+    public static @PolyConstant Short valueOf(@PolyConstant short s);
+
+    public static @PolyConstant Short decode(@PolyConstant String nm);
+
+    public @PolyConstant Short(@PolyConstant short value);
+
+    public @PolyConstant Short(@PolyConstant String s);
+
+    public @PolyConstant byte byteValue(@PolyConstant Short this);
+
+    public @PolyConstant short shortValue(@PolyConstant Short this);
+
+    public @PolyConstant int intValue(@PolyConstant Short this);
+
+    public @PolyConstant long longValue(@PolyConstant Short this);
+
+    public @PolyConstant float floatValue(@PolyConstant Short this);
+
+    public @PolyConstant double doubleValue(@PolyConstant Short this);
+
+    public @PolyConstant String toString(@PolyConstant Short this);
+
+    public @PolyConstant int hashCode(@PolyConstant Short this);
+
+    public @PolyConstant int compareTo(@PolyConstant Short this, @PolyConstant Short anotherShort);
+
+    public static @PolyConstant int compare(@PolyConstant short x, @PolyConstant short y);
+
+    public static final @MaybeDerivedFromConstant int SIZE = 16;
+
+    public static @PolyConstant short reverseBytes(@PolyConstant short i);
+}
