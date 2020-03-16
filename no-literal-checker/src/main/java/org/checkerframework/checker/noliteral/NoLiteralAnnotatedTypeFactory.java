@@ -1,11 +1,10 @@
 package org.checkerframework.checker.noliteral;
 
-import com.sun.source.tree.Tree.Kind;
-import com.sun.source.tree.VariableTree;
 import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
@@ -16,15 +15,12 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedTypeVariable;
-import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
-import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TypesUtils;
 
 /** The type factory for the no literal checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
@@ -55,11 +51,6 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected TypeAnnotator createTypeAnnotator() {
     return new ListTypeAnnotator(new NoLiteralTypeAnnotator(this), super.createTypeAnnotator());
-  }
-
-  @Override
-  protected TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(new NoLiteralTreeAnnotator(this), super.createTreeAnnotator());
   }
 
   @Override
@@ -160,8 +151,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Default unannotated type variables to @MaybeConstant, because it is desirable to assume the
-   * worst about e.g. Lists of Strings.
+   * Default unannotated relevant type variables to @MaybeConstant, because it is desirable to
+   * assume the worst about e.g. Lists of Strings. This will cause false positives in some cases,
+   * but is a work-around until WPI fully supports inferring annotations on type variables from
+   * uses.
    */
   private class NoLiteralTypeAnnotator extends TypeAnnotator {
     public NoLiteralTypeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
@@ -169,57 +162,30 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     @Override
-    public Void visitTypeVariable(AnnotatedTypeVariable type, Void aVoid) {
-
-      if (!type.hasExplicitAnnotation(NON_CONSTANT)) {
-        type.replaceAnnotation(MAYBE_CONSTANT);
-      }
-
-      return super.visitTypeVariable(type, aVoid);
-    }
-
-    /**
-     * Default type variables in return types of user-written methods to MaybeConstant, for
-     * consistency with other defaulting of type variables.
-     */
-    @Override
-    public Void visitExecutable(AnnotatedExecutableType method, Void aVoid) {
-      AnnotatedTypeMirror returnType = method.getReturnType();
-      if (returnType != null && returnType.getKind() == TypeKind.DECLARED) {
-        AnnotatedDeclaredType asDeclared = (AnnotatedDeclaredType) returnType;
-        List<? extends AnnotatedTypeMirror> typeArgs = asDeclared.getTypeArguments();
-        if (typeArgs.size() > 0) {
-          for (AnnotatedTypeMirror typeArg : typeArgs) {
-            if (!typeArg.hasExplicitAnnotation(NON_CONSTANT)) {
-              typeArg.replaceAnnotation(MAYBE_CONSTANT);
-            }
+    public Void visitDeclared(AnnotatedDeclaredType type, Void aVoid) {
+      List<? extends AnnotatedTypeMirror> typeArgs = type.getTypeArguments();
+      if (typeArgs.size() > 0) {
+        for (AnnotatedTypeMirror typeArg : typeArgs) {
+          if (!typeArg.hasExplicitAnnotation(NON_CONSTANT)
+              && isRelevantClass(typeArg.getUnderlyingType())) {
+            typeArg.replaceAnnotation(MAYBE_CONSTANT);
           }
         }
       }
-      return super.visitExecutable(method, aVoid);
+      return super.visitDeclared(type, aVoid);
     }
   }
 
   /**
-   * Default unannotated type variables in local variable declarations to @MaybeConstant, because it
-   * is desirable to assume the worst about e.g. Lists of Strings.
+   * Returns true if the given type mirror represents a declared type that could have been derived
+   * from a literal: a boxed primitive or a string.
+   *
+   * @param type a non-primitive type
    */
-  private class NoLiteralTreeAnnotator extends TreeAnnotator {
-    public NoLiteralTreeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
-      super(factory);
+  private boolean isRelevantClass(TypeMirror type) {
+    if (TypesUtils.isBoxedPrimitive(type) || TypesUtils.isString(type)) {
+      return !TypesUtils.isBooleanType(type);
     }
-
-    @Override
-    public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (node.getType().getKind() == Kind.PARAMETERIZED_TYPE) {
-        AnnotatedDeclaredType asDeclared = (AnnotatedDeclaredType) annotatedTypeMirror;
-        for (AnnotatedTypeMirror atm : asDeclared.getTypeArguments()) {
-          if (!atm.hasExplicitAnnotation(NON_CONSTANT)) {
-            atm.replaceAnnotation(MAYBE_CONSTANT);
-          }
-        }
-      }
-      return super.visitVariable(node, annotatedTypeMirror);
-    }
+    return false;
   }
 }
