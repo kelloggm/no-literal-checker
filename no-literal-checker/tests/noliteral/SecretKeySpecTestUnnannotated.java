@@ -1,5 +1,5 @@
-// This is an unnannotated program that should throw an error, because an annotation
-// is needed
+// A smoke test. This is an unnannotated program that should throw an error,
+// because an annotation is needed.
 
 import javax.crypto.spec.SecretKeySpec;
 

@@ -1,3 +1,5 @@
+// test that Random.nextInt() produces non-constant values
+
 import org.checkerframework.checker.noliteral.qual.*;
 
 import java.util.Random;

@@ -1,3 +1,5 @@
+// test that the inferred types of various kinds of constants are correct
+
 import org.checkerframework.checker.noliteral.qual.*;
 
 class Constants {

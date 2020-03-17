@@ -1,3 +1,5 @@
+// Simple test that LUB behaves as expected.
+
 import org.checkerframework.checker.noliteral.qual.*;
 
 class Conditionals {

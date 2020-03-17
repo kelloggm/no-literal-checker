@@ -1,6 +1,7 @@
+// Test basic subtyping relationships for the NoLiteral Checker.
+
 import org.checkerframework.checker.noliteral.qual.*;
 
-// Test basic subtyping relationships for the NoLiteral Checker.
 class SubtypeTest {
     void allSubtypingRelationships(@MaybeDerivedFromConstant int x, @NonConstant int y) {
         @MaybeDerivedFromConstant int a = x;

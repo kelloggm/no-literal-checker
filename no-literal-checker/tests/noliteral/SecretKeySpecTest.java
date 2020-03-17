@@ -1,4 +1,5 @@
-// This should be the result of running WPI on this program if it is unannotated
+// A smoke test.
+// This should be the result of running WPI on this program if it is unannotated.
 
 import javax.crypto.spec.SecretKeySpec;
 
