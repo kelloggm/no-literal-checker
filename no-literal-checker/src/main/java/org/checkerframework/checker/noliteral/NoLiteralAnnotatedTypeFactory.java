@@ -177,7 +177,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /**
    * Returns true if the given type mirror represents a declared type that could have been derived
-   * from a literal: a boxed primitive or a string.
+   * from a literal: a boxed primitive or a string. Returns false for java.lang.Boolean, because
+   * this checker does not consider booleans literals.
    *
    * @param type a non-primitive type
    */
