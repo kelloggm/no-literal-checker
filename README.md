@@ -1,3 +1,5 @@
+## THIS IS A PROTOTYPE: IT CAN CURRENTLY ONLY BE DEPLOYED USING A LOCALLY-BUILT VERSION OF THE CHECKER FRAMEWORK
+
 ### No Literal Checker
 
 This checker proves that no literal or literal-derived values can flow to 
