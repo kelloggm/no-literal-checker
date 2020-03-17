@@ -59,7 +59,6 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // Ensure that unchecked code is treated optimistically by switching the
     // standard defaults for unchecked code.
     defaults.addUncheckedCodeDefault(MAYBE_CONSTANT, TypeUseLocation.PARAMETER);
-    // defaults.addUncheckedCodeDefault(MAYBE_CONSTANT, TypeUseLocation.LOWER_BOUND);
     defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.RETURN);
     defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.UPPER_BOUND);
     defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
