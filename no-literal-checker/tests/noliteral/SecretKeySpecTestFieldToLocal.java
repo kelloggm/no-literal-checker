@@ -29,6 +29,8 @@ public class SecretKeySpecTestFieldToLocal {
         return new SecretKeySpec(theBytes, "AES");
     }
 
+    // CORRECT CODE FOLLOWS
+
     private String secretKey;
 
     public SecretKeySpec getKeySpecOk() {
