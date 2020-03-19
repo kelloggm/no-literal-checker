@@ -1,5 +1,6 @@
 package org.checkerframework.checker.noliteral;
 
+import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import java.util.ArrayList;
@@ -60,6 +61,16 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   @Override
   protected Set<? extends AnnotationMirror> getThrowUpperBoundAnnotations() {
     return Collections.singleton(atypeFactory.getMaybeConstant());
+  }
+
+  /**
+   * All annotation arguments must be literals, so there is no need to check them. See
+   * https://github.com/typetools/checker-framework/issues/3178 for an explanation of why this is
+   * necessary to avoid false positives.
+   */
+  @Override
+  public Void visitAnnotation(AnnotationTree node, Void p) {
+    return null;
   }
 
   /**
