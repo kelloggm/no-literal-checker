@@ -6,6 +6,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.Tree.Kind;
+import com.sun.source.tree.VariableTree;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -15,6 +20,8 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
+import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
+import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
@@ -51,6 +58,11 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected TypeAnnotator createTypeAnnotator() {
     return new ListTypeAnnotator(new NoLiteralTypeAnnotator(this), super.createTypeAnnotator());
+  }
+
+  @Override
+  protected TreeAnnotator createTreeAnnotator() {
+    return new ListTreeAnnotator(new NoLiteralTreeAnnotator(this), super.createTreeAnnotator());
   }
 
   @Override
@@ -187,5 +199,36 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       return !TypesUtils.isBooleanType(type);
     }
     return false;
+  }
+
+  private class NoLiteralTreeAnnotator extends TreeAnnotator {
+    public NoLiteralTreeAnnotator(NoLiteralAnnotatedTypeFactory factory) {
+      super(factory);
+    }
+
+    @Override
+    public Void visitVariable(VariableTree node, AnnotatedTypeMirror lhsType) {
+      ExpressionTree initializer = node.getInitializer();
+      if (initializer != null && initializer.getKind() == Kind.NEW_ARRAY) {
+        AnnotatedTypeMirror rhsType = getAnnotatedType(initializer);
+        AnnotatedTypeMirror rhsComponent = ((AnnotatedArrayType) rhsType).getComponentType();
+        if (lhsType.getKind() == TypeKind.ARRAY) {
+          AnnotatedTypeMirror lhsComponent = ((AnnotatedArrayType) lhsType).getComponentType();
+          if (!lhsComponent.isAnnotatedInHierarchy(MAYBE_CONSTANT)) {
+            if (node.getName().toString().contains("arr")) {
+              System.out.println("executing replacement for " + node.getName().toString() + ":");
+              System.out.println("old lhs: " + lhsType);
+              System.out.println("rhs: " + rhsType);
+            }
+            lhsComponent.replaceAnnotation(rhsComponent.getAnnotationInHierarchy(MAYBE_CONSTANT));
+            if (node.getName().toString().contains("arr")) {
+              System.out.println("new lhs: " + lhsType);
+              System.out.println("-------------");
+            }
+          }
+        }
+      }
+      return super.visitVariable(node, lhsType);
+    }
   }
 }
