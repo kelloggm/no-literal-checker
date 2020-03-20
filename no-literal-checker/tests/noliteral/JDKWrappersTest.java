@@ -8,6 +8,8 @@ class JDKWrappersTest {
     private @MaybeDerivedFromConstant Long l = 0l;
     private @MaybeDerivedFromConstant Integer i = 5;
     private @MaybeDerivedFromConstant Short s = 3;
+    private @MaybeDerivedFromConstant Double d = 1.0;
+    private @MaybeDerivedFromConstant Float f = 1.0f;
 
     void testIntToStringAndValueOf() {
         // :: error: assignment.type.incompatible
@@ -49,5 +51,25 @@ class JDKWrappersTest {
     void testParseByte() {
         // :: error: assignment.type.incompatible
         @NonConstant byte x = Byte.parseByte("0xb", 4);
+    }
+
+    void testDoubleToStringAndValueOf() {
+        // :: error: assignment.type.incompatible
+        @NonConstant String s = Double.valueOf(5.0).toString();
+    }
+
+    void testParseDouble() {
+        // :: error: assignment.type.incompatible
+        @NonConstant double x = Double.parseDouble("5.0");
+    }
+
+    void testFloatToStringAndValueOf() {
+        // :: error: assignment.type.incompatible
+        @NonConstant String s = Float.valueOf(5.0f).toString();
+    }
+
+    void testParseFloat() {
+        // :: error: assignment.type.incompatible
+        @NonConstant Float x = Float.parseFloat("5.0f");
     }
 }

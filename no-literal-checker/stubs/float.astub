@@ -1,0 +1,76 @@
+package java.lang;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+public final class Float extends Number implements Comparable<Float> {
+
+    public static final @MaybeDerivedFromConstant float POSITIVE_INFINITY = 1.0f / 0.0f;
+
+    public static final @MaybeDerivedFromConstant float NEGATIVE_INFINITY = -1.0f / 0.0f;
+
+    public static final @MaybeDerivedFromConstant float NaN = 0.0f / 0.0f;
+
+    public static final @MaybeDerivedFromConstant float MAX_VALUE = 0x1.fffffeP+127f; // 3.4028235e+38f
+
+    public static final @MaybeDerivedFromConstant float MIN_NORMAL = 0x1.0p-126f; // 1.17549435E-38f
+
+    public static final @MaybeDerivedFromConstant float MIN_VALUE = 0x0.000002P-126f; // 1.4e-45f
+
+    public static final @MaybeDerivedFromConstant int MAX_EXPONENT = 127;
+
+    public static final @MaybeDerivedFromConstant int MIN_EXPONENT = -126;
+
+    public static final @MaybeDerivedFromConstant int SIZE = 32;
+
+    public static final @MaybeDerivedFromConstant int BYTES = SIZE / Byte.SIZE;
+
+    public static @PolyConstant String toString(@PolyConstant float f);
+
+    public static @PolyConstant String toHexString(@PolyConstant float f);
+
+    public static @PolyConstant Float valueOf(@PolyConstant String s);
+
+    public static @PolyConstant Float valueOf(@PolyConstant float f);
+
+    public static @PolyConstant float parseFloat(@PolyConstant String s);
+
+    public @PolyConstant Float(@PolyConstant float value);
+
+    public @PolyConstant Float(@PolyConstant double value);
+
+    public @PolyConstant Float(@PolyConstant String s);
+
+    public @PolyConstant String toString(@PolyConstant Float this);
+
+    public @PolyConstant byte byteValue(@PolyConstant Float this);
+
+    public @PolyConstant short shortValue(@PolyConstant Float this);
+
+    public @PolyConstant int intValue(@PolyConstant Float this);
+
+    public @PolyConstant long longValue(@PolyConstant Float this);
+
+    public @PolyConstant float floatValue(@PolyConstant Float this);
+
+    public @PolyConstant double doubleValue(@PolyConstant Float this);
+
+    public @PolyConstant int hashCode(@PolyConstant Float this);
+
+    public static @PolyConstant int hashCode(@PolyConstant float value);
+
+    public static @PolyConstant int floatToIntBits(@PolyConstant float value);
+
+    public static native @PolyConstant int floatToRawIntBits(@PolyConstant float value);
+
+    public static native @PolyConstant float intBitsToFloat(@PolyConstant int bits);
+
+    public @PolyConstant int compareTo(@PolyConstant Float this, @PolyConstant Float anotherFloat);
+
+    public static @PolyConstant int compare(@PolyConstant float f1, @PolyConstant float f2);
+
+    public static @PolyConstant float sum(@PolyConstant float a, @PolyConstant float b);
+
+    public static @PolyConstant float max(@PolyConstant float a, @PolyConstant float b);
+
+    public static @PolyConstant float min(@PolyConstant float a, @PolyConstant float b);
+}
