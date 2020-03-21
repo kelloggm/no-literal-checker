@@ -2,15 +2,15 @@
 
 ### No Literal Checker
 
-This checker proves that no literal or literal-derived values can flow to 
-specified APIs in a Java codebase. It can enforce security and compliance 
+This checker proves that no literal or literal-derived values can flow to
+specified APIs in a Java codebase. It can enforce security and compliance
 rules like "do not hard-code credentials".
 
 ### What problem does this solve?
 
 For security, the value
-passed to some APIs must never be a constant. For example, cryptographic keys 
-and passwords need to come from user configuration or computation, not from a 
+passed to some APIs must never be a constant. For example, cryptographic keys
+and passwords need to come from user configuration or computation, not from a
 hard-coded constant.
 
 ### How does it work?
@@ -42,7 +42,7 @@ The default is different in unchecked code (that is, code for which
 only the bytecode is available, such as code from a `.jar` file). The following
 optimistic defaulting rules are applied:
 * the return type of any function defined in a library is `@NonConstant`
-* the types of a library function's formal parameters are always `@MaybeDerivedFromConstant` 
+* the types of a library function's formal parameters are always `@MaybeDerivedFromConstant`
 unless a stub file is supplied that overwrites this default
 
 As a consequence of these rules, users MUST always write stub files for libraries
@@ -62,7 +62,7 @@ class SecretKeySpec {
 }
 ```
 
-For more about stub files, see the 
+For more about stub files, see the
 [Checker Framework manual](https://checkerframework.org/manual/#stub).
 
 ### Using the checker
@@ -70,5 +70,5 @@ For more about stub files, see the
 The Checker Framework manual explais how to [integrate with external tools](https://checkerframework.org/manual/#external-tools).
 
 Due to the high annotation burden imposed by this checker, it is recommended that you
-run the checker using a type inference tool, such as 
+run the checker using a type inference tool, such as
 [whole-program inference](https://checkerframework.org/manual/#type-inference).
