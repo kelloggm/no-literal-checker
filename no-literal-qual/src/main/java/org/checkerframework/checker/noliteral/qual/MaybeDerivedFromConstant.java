@@ -11,9 +11,10 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
 /**
- * This type represents an expression that may have been derived from literal, like 5 or {0xa, 0xb}.
+ * This type represents an expression that may have been derived (in part) from a literal, like {@code 5}, {@code "hello"},  or {@code {0xa, 0xb}}.
+
  * This is also the type of any expression that contains a subexpression that may be a constant. For
- * example, the type of <code>"hello" + x</code>, where <code>x</code> is a non-constant String, is
+ * example, the type of <code>"hello" + x</code> is always
  * <code>@MaybeDerivedFromConstant String</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)

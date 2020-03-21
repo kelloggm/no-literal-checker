@@ -3,13 +3,13 @@
 ### No Literal Checker
 
 This checker proves that no literal or literal-derived values can flow to 
-specified APIs in a Java codebase. Useful for enforcing security and compliance 
+specified APIs in a Java codebase. It can enforce security and compliance 
 rules like "do not hard-code credentials".
 
 ### What problem does this solve?
 
-Many interesting security/compliance properties are requirements that the value
-passed to a particular API never be a constant. For example, cryptographic keys 
+For security, the value
+passed to some APIs must never be a constant. For example, cryptographic keys 
 and passwords need to come from user configuration or computation, not from a 
 hard-coded constant.
 
@@ -26,10 +26,10 @@ these two types:
 ```
 
 The default is `@NonConstant` for all expressions except manifest literals (examples
-of manifest literals include `1`, `"hello"`, and `{0xa, 0xb}`). That default includes
-method parameters, so a user should expect to need to write an annotation on the definition
-of any method that is called with a constant argument. For example, if your code includes
-the call:
+of manifest literals include `1`, `"hello"`, and `{0xa, 0xb}`).
+Because method parameters default to `@NonConstant`, the user must write a `@MaybeDerivedFromConstant` annotation on the definition
+of any method that may be called with a constant argument. For example, if your code includes
+the correct call:
 ```java
 foo(5);
 ```
@@ -46,7 +46,7 @@ optimistic defaulting rules are applied:
 unless a stub file is supplied that overwrites this default
 
 As a consequence of these rules, users MUST always write stub files for libraries
-they intend to protect - this checker is **useless** without such a stub.
+they intend to protect -- this checker is **useless** without such a stub.
 
 For example, to enforce that calls to the `javax.crypto.spec.SecretKeySpec` constructor
 only ever provide non-constant keys, you would use a stub file like this:
@@ -63,12 +63,11 @@ class SecretKeySpec {
 ```
 
 For more about stub files, see the 
-[Checker Framework manual section](https://checkerframework.org/manual/#stub).
+[Checker Framework manual](https://checkerframework.org/manual/#stub).
 
-### Using the checker on your own code
+### Using the checker
 
-See the [Checker Framework manual section](https://checkerframework.org/manual/#external-tools)
-on integration with external tools.
+The Checker Framework manual explais how to [integrate with external tools](https://checkerframework.org/manual/#external-tools).
 
 Due to the high annotation burden imposed by this checker, it is recommended that you
 run the checker using a type inference tool, such as 

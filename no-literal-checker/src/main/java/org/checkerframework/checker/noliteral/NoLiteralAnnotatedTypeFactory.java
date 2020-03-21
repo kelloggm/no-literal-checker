@@ -22,14 +22,14 @@ import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
-/** The type factory for the no literal checker. */
+/** The type factory for the No Literal Checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
-  /** The canonical maybe-constant annotation */
+  /** The canonical {@code @}{@link @MaybeDerivedFromConstant} annotation. */
   private final AnnotationMirror MAYBE_CONSTANT =
       AnnotationBuilder.fromClass(elements, MaybeDerivedFromConstant.class);
 
-  /** The canonical non-constant annotation */
+  /** The canonical {@code @}{@link NonConstant} annotation. */
   private final AnnotationMirror NON_CONSTANT =
       AnnotationBuilder.fromClass(elements, NonConstant.class);
 
@@ -88,8 +88,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
      * Replace the normal default applier element with one that also applies the defaults to the
      * component types of arrays. For the no-literal checker, it makes a lot more sense to talk
      * about "a non-constant array of string constants" than it does to say "a constant array of
-     * non-constant strings" - the latter doesn't even make sense. So to do optimistic defaulting in
-     * bytecode correctly, the defaults need to be applied all the way down through an array.
+     * non-constant strings" -- the latter doesn't even make sense. So to do optimistic defaulting
+     * in bytecode correctly, the defaults need to be applied all the way down through an array.
      */
     @Override
     protected DefaultApplierElement createDefaultApplierElement(
@@ -98,8 +98,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         AnnotatedTypeMirror type,
         boolean applyToTypeVar) {
       // Must check because the defaults for source code must not change to avoid interfering with
-      // CLIMB-to-top
-      // local type inference.
+      // CLIMB-to-top local type inference.
       if (ElementUtils.isElementFromByteCode(annotationScope)) {
         return new NoLiteralDefaultApplierElement(
             atypeFactory, annotationScope, type, applyToTypeVar);
@@ -146,7 +145,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   protected void checkInvalidOptionsInferSignatures() {
     // This checker is specifically designed to work with whole-program inference,
     // so it can turn off the defensive check in WPI that requires certain bytecode
-    // defaulting rules. This method is therefore overwritten to do nothing.
+    // defaulting rules. This method is therefore overridden to do nothing.
   }
 
   /**
@@ -183,9 +182,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param type a non-primitive type
    */
   private boolean isRelevantClass(TypeMirror type) {
-    if (TypesUtils.isBoxedPrimitive(type) || TypesUtils.isString(type)) {
-      return !TypesUtils.isBooleanType(type);
-    }
-    return false;
+    return (TypesUtils.isBoxedPrimitive(type) && !TypesUtils.isBooleanType(type))
+        || TypesUtils.isString(type);
   }
 }
