@@ -8,13 +8,13 @@ import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * An expression with this type, and its subexpressions, were definitely not derived from any manifest
- * literals.
+ * An expression with this type, and its subexpressions, were definitely not derived from any
+ * manifest literals.
  *
  * <p>This is the default type in user-written code.
-
- All calls external to the application (i.e.
- * into unchecked class files) are assumed to return values of this type.
+ *
+ * <p>All calls external to the application (i.e. into unchecked class files) are assumed to return
+ * values of this type.
  */
 @SubtypeOf({MaybeDerivedFromConstant.class})
 @Retention(RetentionPolicy.RUNTIME)

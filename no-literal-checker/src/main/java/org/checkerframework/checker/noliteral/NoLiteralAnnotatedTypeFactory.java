@@ -56,12 +56,18 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected final QualifierDefaults createQualifierDefaults() {
     QualifierDefaults defaults = new NoLiteralQualifierDefaults(elements, this);
+
     // Ensure that unchecked code is treated optimistically by switching the
     // standard defaults for unchecked code.
+    for (TypeUseLocation loc : QualifierDefaults.STANDARD_UNCHECKED_DEFAULTS_TOP) {
+      defaults.addUncheckedCodeDefault(NON_CONSTANT, loc);
+    }
+
+    // Instead of iterating through QualifierDefaults.STANDARD_UNCHECKED_DEFAULTS_BOTTOM,
+    // only switch the default for PARAMETER, because changing LOWER_BOUND is incompatible
+    // with the other changes to type variables. See NoLiteralTypeAnnotator's documentation.
     defaults.addUncheckedCodeDefault(MAYBE_CONSTANT, TypeUseLocation.PARAMETER);
-    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.RETURN);
-    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.UPPER_BOUND);
-    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
+
     return defaults;
   }
 

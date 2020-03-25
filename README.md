@@ -13,10 +13,24 @@ passed to some APIs must never be a constant. For example, cryptographic keys
 and passwords need to come from user configuration or computation, not from a
 hard-coded constant.
 
+### What is considered a hard-coded constant?
+
+Any manifest literal of types `short`, `int`, `long`, `byte`, `char`, `float`,
+`double`, or `String`, or any array of these, is considered a hard-coded constant.
+Examples include `1`, `"hello"`, and `{0xa, 0xb}`. Values derived from other hard-coded
+constants by arithmetic are also considered hard-coded. For example `1 + x` is a
+hard-coded constant, even if `x` is not. This rule is conservative: it might overestimate
+which values in the program are hard-coded. It is necessary, though, because an
+expression like `x * 0` really is hard-coded, even if `x` is not.
+
+Note that `boolean`s are *not* considered constants, because they only have two values
+and are not interesting for the security properties this checker is meant to track.
+`null` is also *not* considered a constant; for null-tracking, see the [Nullness
+Checker](https://checkerframework.org/manual/#nullness-checker) of the Checker Framework.
+
 ### How does it work?
 
-The checker computes a forward slice from each manifest literal in the program
-to all values derived from it. Each expression in the program receives one of
+The checker assigns each expression in the program one of
 these two types:
 
 ```java
@@ -25,8 +39,7 @@ these two types:
        @NonConstant
 ```
 
-The default is `@NonConstant` for all expressions except manifest literals (examples
-of manifest literals include `1`, `"hello"`, and `{0xa, 0xb}`).
+The default is `@NonConstant` for all expressions except manifest literals.
 Because method parameters default to `@NonConstant`, the user must write a `@MaybeDerivedFromConstant` annotation on the definition
 of any method that may be called with a constant argument. For example, if your code includes
 the correct call:
@@ -43,6 +56,7 @@ only the bytecode is available, such as code from a `.jar` file). The following
 optimistic defaulting rules are applied:
 * the return type of any function defined in a library is `@NonConstant`
 * the types of a library function's formal parameters are always `@MaybeDerivedFromConstant`
+
 unless a stub file is supplied that overwrites this default
 
 As a consequence of these rules, users MUST always write stub files for libraries

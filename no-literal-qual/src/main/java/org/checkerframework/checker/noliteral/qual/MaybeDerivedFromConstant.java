@@ -11,11 +11,8 @@ import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TypeUseLocation;
 
 /**
- * This type represents an expression that may have been derived (in part) from a literal, like {@code 5}, {@code "hello"},  or {@code {0xa, 0xb}}.
-
- * This is also the type of any expression that contains a subexpression that may be a constant. For
- * example, the type of <code>"hello" + x</code> is always
- * <code>@MaybeDerivedFromConstant String</code>.
+ * This type represents a literal expression, like {@code 5}, {@code "hello"}, or {@code {0xa,
+ * 0xb}}, or an expression derived from a literal, like {@code "hello" + x}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})

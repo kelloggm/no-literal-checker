@@ -2,7 +2,9 @@ package org.checkerframework.checker.noliteral;
 
 import org.checkerframework.common.basetype.BaseTypeChecker;
 
-/** The NoLiteral Checker enforces that literals don't go where they don't belong. */
+/**
+ * The No Literal Checker tracks the flow of literals and derivative expressions through the code.
+ */
 public class NoLiteralChecker extends BaseTypeChecker {
 
   /**
