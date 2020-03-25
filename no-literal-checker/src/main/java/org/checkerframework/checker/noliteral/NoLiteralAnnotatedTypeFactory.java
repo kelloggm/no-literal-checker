@@ -1,14 +1,15 @@
 package org.checkerframework.checker.noliteral;
 
 import java.util.List;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
@@ -24,9 +25,12 @@ import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
+import org.checkerframework.framework.type.visitor.AnnotatedTypeMerger;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 /** The type factory for the no literal checker. */
@@ -62,7 +66,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   @Override
   protected TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(new NoLiteralTreeAnnotator(this), super.createTreeAnnotator());
+    return new ListTreeAnnotator(super.createTreeAnnotator(), new NoLiteralTreeAnnotator(this));
   }
 
   @Override
@@ -112,13 +116,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       // Must check because the defaults for source code must not change to avoid interfering with
       // CLIMB-to-top
       // local type inference.
-      if (ElementUtils.isElementFromByteCode(annotationScope)) {
-        return new NoLiteralDefaultApplierElement(
-            atypeFactory, annotationScope, type, applyToTypeVar);
-      } else {
-        return super.createDefaultApplierElement(
-            atypeFactory, annotationScope, type, applyToTypeVar);
-      }
+      boolean fromBytecode = ElementUtils.isElementFromByteCode(annotationScope);
+      return new NoLiteralDefaultApplierElement(
+            atypeFactory, annotationScope, type, applyToTypeVar, fromBytecode);
+
     }
 
     /**
@@ -128,12 +129,18 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
      */
     private class NoLiteralDefaultApplierElement extends DefaultApplierElement {
 
+      /**
+       * Whether the target type is from bytecode.
+       */
+      private final boolean fromBytecode;
+
       public NoLiteralDefaultApplierElement(
-          AnnotatedTypeFactory atypeFactory,
-          Element annotationScope,
-          AnnotatedTypeMirror type,
-          boolean applyToTypeVar) {
+              AnnotatedTypeFactory atypeFactory,
+              Element annotationScope,
+              AnnotatedTypeMirror type,
+              boolean applyToTypeVar, boolean fromBytecode) {
         super(atypeFactory, annotationScope, type, applyToTypeVar);
+        this.fromBytecode = fromBytecode;
       }
 
       /**
@@ -146,7 +153,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       @Override
       protected void addAnnotation(AnnotatedTypeMirror type, AnnotationMirror qual) {
         super.addAnnotation(type, qual);
-        if (type.getKind() == TypeKind.ARRAY) {
+        if (fromBytecode && type.getKind() == TypeKind.ARRAY) {
           AnnotatedArrayType asArrayType = (AnnotatedArrayType) type;
           addAnnotation(asArrayType.getComponentType(), qual);
         }
@@ -207,28 +214,65 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
 
     @Override
-    public Void visitVariable(VariableTree node, AnnotatedTypeMirror lhsType) {
+    public Void visitVariable(VariableTree node, AnnotatedTypeMirror type) {
+
+      if (node.getName().contentEquals("carr3")) {
+        System.out.println("carr3:");
+        System.out.println(type);
+        System.out.println(node.getInitializer());
+        System.out.println(getAnnotatedType(node.getInitializer()));
+      }
+
+      VariableElement element = TreeUtils.elementFromDeclaration(node);
+      if (!ElementUtils.isEffectivelyFinal(element)) {
+        return super.visitVariable(node, type);
+      }
+
+      AnnotatedTypeMirror lhsType = type;
+
       ExpressionTree initializer = node.getInitializer();
       if (initializer != null && initializer.getKind() == Kind.NEW_ARRAY) {
         AnnotatedTypeMirror rhsType = getAnnotatedType(initializer);
-        AnnotatedTypeMirror rhsComponent = ((AnnotatedArrayType) rhsType).getComponentType();
         if (lhsType.getKind() == TypeKind.ARRAY) {
-          AnnotatedTypeMirror lhsComponent = ((AnnotatedArrayType) lhsType).getComponentType();
-          if (!lhsComponent.isAnnotatedInHierarchy(MAYBE_CONSTANT)) {
             if (node.getName().toString().contains("arr")) {
               System.out.println("executing replacement for " + node.getName().toString() + ":");
               System.out.println("old lhs: " + lhsType);
               System.out.println("rhs: " + rhsType);
             }
-            lhsComponent.replaceAnnotation(rhsComponent.getAnnotationInHierarchy(MAYBE_CONSTANT));
+            NoLiteralPropagationTypeMerger merger = new NoLiteralPropagationTypeMerger(atypeFactory.getProcessingEnv());
+            merger.visit(rhsType, lhsType);
             if (node.getName().toString().contains("arr")) {
               System.out.println("new lhs: " + lhsType);
               System.out.println("-------------");
             }
           }
-        }
       }
-      return super.visitVariable(node, lhsType);
+      return super.visitVariable(node, type);
+    }
+  }
+
+  /**
+   * An annotated type merger that merges no literal annotations and only if the type that is
+   * receiving an annotation has an @MaybeDerivedFromConstant annotation or NO key for annotations.
+   */
+  private class NoLiteralPropagationTypeMerger extends AnnotatedTypeMerger {
+    private final ProcessingEnvironment env;
+
+    private NoLiteralPropagationTypeMerger(ProcessingEnvironment env) {
+      this.env = env;
+    }
+
+    @Override
+    protected void replaceAnnotations(AnnotatedTypeMirror from, AnnotatedTypeMirror to) {
+      final AnnotationMirror fromNoLiteralAnno = from.getAnnotationInHierarchy(MAYBE_CONSTANT);
+      final AnnotationMirror toNoLiteralAnno = to.getAnnotationInHierarchy(MAYBE_CONSTANT);
+
+      boolean toNeedsAnnotation =
+              toNoLiteralAnno == null || AnnotationUtils.areSame(toNoLiteralAnno, MAYBE_CONSTANT);
+      if (fromNoLiteralAnno != null && toNeedsAnnotation) {
+        AnnotationBuilder annotationBuilder = new AnnotationBuilder(env, fromNoLiteralAnno);
+        to.replaceAnnotation(annotationBuilder.build());
+      }
     }
   }
 }

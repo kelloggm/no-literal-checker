@@ -11,7 +11,7 @@ class ArrayParts {
     }
 
     void test2() {
-        // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
+        // :: error: assignment.type.incompatible : error: array.initializer.type.incompatible
         int[] key = {1, 2, 3};
         test(key);
     }

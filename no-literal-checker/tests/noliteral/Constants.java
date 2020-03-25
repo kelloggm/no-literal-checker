@@ -17,7 +17,7 @@ class Constants {
         @NonConstant byte[] y = {0x00, 0x0f};
 
         // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
-        byte @NonConstant [] z = {0x00, 0x0f};
+        @NonConstant byte @NonConstant [] z = {0x00, 0x0f};
     }
 
     void testDouble() {
