@@ -11,7 +11,7 @@ import org.checkerframework.framework.qual.PolymorphicQualifier;
  * A polymorphic qualifier for the no literal type system.
  *
  * <p>See <a href="https://checkerframework.org/manual/#qualifier-polymorphism">the Checker
- * Framework manual</a>.
+ * Framework manual</a> section on polymorphic types.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

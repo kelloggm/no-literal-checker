@@ -15,6 +15,10 @@ import org.checkerframework.framework.qual.SubtypeOf;
  *
  * <p>All calls external to the application (i.e. into unchecked class files) are assumed to return
  * values of this type.
+ *
+ * <p>See the <a
+ * href="https://github.com/kelloggm/no-literal-checker/blob/master/README.md">README</a> for more
+ * details.
  */
 @SubtypeOf({MaybeDerivedFromConstant.class})
 @Retention(RetentionPolicy.RUNTIME)

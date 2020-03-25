@@ -13,6 +13,10 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 /**
  * This type represents a literal expression, like {@code 5}, {@code "hello"}, or {@code {0xa,
  * 0xb}}, or an expression derived from a literal, like {@code "hello" + x}.
+ *
+ * <p>See the <a
+ * href="https://github.com/kelloggm/no-literal-checker/blob/master/README.md">README</a> for more
+ * details.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
