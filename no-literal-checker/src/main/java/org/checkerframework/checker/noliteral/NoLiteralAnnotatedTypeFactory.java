@@ -202,8 +202,9 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * Returns the least upper bound of the leaf component types of the array initializer in the no
    * literal hierarchy.
    *
-   * @param node an array initializer expression
-   * @return the least upper bound of the leaf component types
+   * @param node a new array expression, such as {@code new int[][] {{5}}}
+   * @return the least upper bound of the leaf component types, or null if {@code node} does not
+   *     have an initializer (such as {@code new int[0]})
    */
   private @Nullable AnnotationMirror lubOfArrayComponents(NewArrayTree node) {
     AnnotationMirror result = null;
