@@ -608,7 +608,7 @@ public final class String
      * @return  the length of the sequence of characters represented by this
      *          object.
      */
-    public int length() {
+    public @PolyConstant int length(@PolyConstant String this) {
         return value.length;
     }
 
@@ -642,7 +642,7 @@ public final class String
      *             argument is negative or not less than the length of this
      *             string.
      */
-    public char charAt(@MaybeDerivedFromConstant int index) {
+    public @PolyConstant char charAt(@PolyConstant String this, @MaybeDerivedFromConstant int index) {
         if ((index < 0) || (index >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
         }
@@ -729,7 +729,7 @@ public final class String
      * {@code beginIndex} is larger than {@code endIndex}.
      * @since  1.5
      */
-    public int codePointCount(@MaybeDerivedFromConstant int beginIndex, @MaybeDerivedFromConstant int endIndex) {
+    public @PolyConstant int codePointCount(@PolyConstant String this, @MaybeDerivedFromConstant int beginIndex, @MaybeDerivedFromConstant int endIndex) {
         if (beginIndex < 0 || endIndex > value.length || beginIndex > endIndex) {
             throw new IndexOutOfBoundsException();
         }
@@ -756,7 +756,7 @@ public final class String
      *   of {@code codePointOffset} code points.
      * @since 1.5
      */
-    public int offsetByCodePoints(@MaybeDerivedFromConstant int index, @MaybeDerivedFromConstant int codePointOffset) {
+    public @PolyConstant int offsetByCodePoints(@PolyConstant String this, @MaybeDerivedFromConstant int index, @MaybeDerivedFromConstant int codePointOffset) {
         if (index < 0 || index > value.length) {
             throw new IndexOutOfBoundsException();
         }
@@ -962,7 +962,7 @@ public final class String
      * @see  #compareTo(String)
      * @see  #equalsIgnoreCase(String)
      */
-    public boolean equals(Object anObject) {
+    public boolean equals(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant Object anObject) {
         if (this == anObject) {
             return true;
         }
@@ -999,7 +999,7 @@ public final class String
      *
      * @since  1.4
      */
-    public boolean contentEquals(StringBuffer sb) {
+    public boolean contentEquals(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant StringBuffer sb) {
         return contentEquals((CharSequence)sb);
     }
 
@@ -1034,7 +1034,7 @@ public final class String
      *
      * @since  1.5
      */
-    public boolean contentEquals(CharSequence cs) {
+    public boolean contentEquals(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant CharSequence cs) {
         // Argument is a StringBuffer, StringBuilder
         if (cs instanceof AbstractStringBuilder) {
             if (cs instanceof StringBuffer) {
@@ -1091,7 +1091,7 @@ public final class String
      *
      * @see  #equals(Object)
      */
-    public boolean equalsIgnoreCase(String anotherString) {
+    public boolean equalsIgnoreCase(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant String anotherString) {
         return (this == anotherString) ? true
                 : (anotherString != null)
                 && (anotherString.value.length == value.length)
@@ -1139,7 +1139,7 @@ public final class String
      *          value greater than {@code 0} if this string is
      *          lexicographically greater than the string argument.
      */
-    public int compareTo(String anotherString) {
+    public @PolyConstant int compareTo(@PolyConstant String this, @PolyConstant String anotherString) {
         int len1 = value.length;
         int len2 = anotherString.value.length;
         int lim = Math.min(len1, len2);
@@ -1224,7 +1224,7 @@ public final class String
      * @see     java.text.Collator#compare(String, String)
      * @since   1.2
      */
-    public int compareToIgnoreCase(String str) {
+    public @PolyConstant int compareToIgnoreCase(@PolyConstant String this, @PolyConstant String str) {
         return CASE_INSENSITIVE_ORDER.compare(this, str);
     }
 
@@ -1489,7 +1489,7 @@ public final class String
      *          character sequence represented by this object, or
      *          {@code -1} if the character does not occur.
      */
-    public int indexOf(@MaybeDerivedFromConstant int ch) {
+    public @PolyConstant int indexOf(@PolyConstant String this, @MaybeDerivedFromConstant int ch) {
         return indexOf(ch, 0);
     }
 
@@ -1532,7 +1532,7 @@ public final class String
      *          than or equal to {@code fromIndex}, or {@code -1}
      *          if the character does not occur.
      */
-    public int indexOf(@MaybeDerivedFromConstant int ch, @MaybeDerivedFromConstant int fromIndex) {
+    public @PolyConstant int indexOf(@PolyConstant String this, @MaybeDerivedFromConstant int ch, @MaybeDerivedFromConstant int fromIndex) {
         final int max = value.length;
         if (fromIndex < 0) {
             fromIndex = 0;
@@ -1597,7 +1597,7 @@ public final class String
      *          character sequence represented by this object, or
      *          {@code -1} if the character does not occur.
      */
-    public int lastIndexOf(@MaybeDerivedFromConstant int ch) {
+    public @PolyConstant int lastIndexOf(@PolyConstant String this, @MaybeDerivedFromConstant int ch) {
         return lastIndexOf(ch, value.length - 1);
     }
 
@@ -1635,7 +1635,7 @@ public final class String
      *          than or equal to {@code fromIndex}, or {@code -1}
      *          if the character does not occur before that point.
      */
-    public int lastIndexOf(@MaybeDerivedFromConstant int ch, @MaybeDerivedFromConstant int fromIndex) {
+    public @PolyConstant int lastIndexOf(@PolyConstant String this, @MaybeDerivedFromConstant int ch, @MaybeDerivedFromConstant int fromIndex) {
         if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
             // handle most cases here (ch is a BMP code point or a
             // negative value (invalid code point))
@@ -1684,7 +1684,7 @@ public final class String
      * @return  the index of the first occurrence of the specified substring,
      *          or {@code -1} if there is no such occurrence.
      */
-    public int indexOf(@MaybeDerivedFromConstant String str) {
+    public @PolyConstant int indexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str) {
         return indexOf(str, 0);
     }
 
@@ -1704,7 +1704,7 @@ public final class String
      *          starting at the specified index,
      *          or {@code -1} if there is no such occurrence.
      */
-    public int indexOf(@MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
+    public @PolyConstant int indexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
         return indexOf(value, 0, value.length,
                 str.value, 0, str.value.length, fromIndex);
     }
@@ -1793,7 +1793,7 @@ public final class String
      * @return  the index of the last occurrence of the specified substring,
      *          or {@code -1} if there is no such occurrence.
      */
-    public int lastIndexOf(@MaybeDerivedFromConstant String str) {
+    public @PolyConstant int lastIndexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str) {
         return lastIndexOf(str, value.length);
     }
 
@@ -1813,7 +1813,7 @@ public final class String
      *          searching backward from the specified index,
      *          or {@code -1} if there is no such occurrence.
      */
-    public int lastIndexOf(@MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
+    public @PolyConstant int lastIndexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
         return lastIndexOf(value, 0, value.length,
                 str.value, 0, str.value.length, fromIndex);
     }
@@ -2107,7 +2107,7 @@ public final class String
      * @since 1.4
      * @spec JSR-51
      */
-    public boolean matches(@MaybeDerivedFromConstant String regex) {
+    public boolean matches(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant String regex) {
         return Pattern.matches(regex, this);
     }
 
@@ -2119,7 +2119,7 @@ public final class String
      * @return true if this string contains {@code s}, false otherwise
      * @since 1.5
      */
-    public boolean contains(@MaybeDerivedFromConstant CharSequence s) {
+    public boolean contains(@MaybeDerivedFromConstant String this, @MaybeDerivedFromConstant CharSequence s) {
         return indexOf(s.toString()) > -1;
     }
 
