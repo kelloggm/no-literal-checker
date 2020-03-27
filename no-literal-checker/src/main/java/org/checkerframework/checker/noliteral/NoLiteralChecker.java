@@ -1,5 +1,7 @@
 package org.checkerframework.checker.noliteral;
 
+import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
+import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 
 /**
