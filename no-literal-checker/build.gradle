@@ -17,7 +17,11 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.12'
-    testCompile "org.checkerframework:framework-test:${versions.checkerFramework}"
+    testImplementation "org.checkerframework:framework-test:${versions.checkerFramework}"
+
+    // For testing with a compiled version of a test on the classpath,
+    // to ensure that defaults are correct.
+    testImplementation files('tests/prebuilt')
 }
 
 tasks.withType(JavaCompile).all {
