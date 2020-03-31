@@ -64,4 +64,24 @@ class LocalArray {
         // :: error: assignment.type.incompatible
         two_d_array2[0][0] = "foo";
     }
+
+    void test_toCharArray(String s) {
+        // toCharArray is polymorphic, so the RHS is @MaybeDerivedFromConstant char[]
+        char[] array = "foobar".toCharArray();
+        // :: error: argument.type.incompatible
+        requireNonConstantCharArray(array);
+
+        // s is nonConstant, so this array should be too
+        char[] array2 = s.toCharArray();
+        requireNonConstantCharArray(array2);
+
+        // array3 should be @MaybeDerivedFromConstant char[]
+        char[] array3 = myField;
+        // :: error: argument.type.incompatible
+        requireNonConstantCharArray(array);
+    }
+
+    @MaybeDerivedFromConstant char[] myField = {'f', 'o', 'o'};
+
+    void requireNonConstantCharArray(@NonConstant char [] x) { }
 }

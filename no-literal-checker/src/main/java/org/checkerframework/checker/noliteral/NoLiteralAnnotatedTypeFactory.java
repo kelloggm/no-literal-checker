@@ -270,19 +270,15 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         return super.visitVariable(node, type);
       }
 
-      AnnotatedTypeMirror lhsType = type;
-
       ExpressionTree initializer = node.getInitializer();
-      if (initializer != null && initializer.getKind() == Kind.NEW_ARRAY) {
-        AnnotatedTypeMirror rhsType = getAnnotatedType(initializer);
-        if (lhsType.getKind() == TypeKind.ARRAY) {
+      if (initializer != null && type.getKind() == TypeKind.ARRAY) {
+          AnnotatedTypeMirror initializerType = getAnnotatedType(initializer);
           NoLiteralPropagationTypeReplacer replacer = new NoLiteralPropagationTypeReplacer();
-          replacer.visit(rhsType, lhsType);
+          replacer.visit(initializerType, type);
           // Without this, the annotated type factory will continue to use
           // the unannotated version of lhsType for references to the variable
           // later in the method.
-          fromMemberTreeCache.put(node, lhsType);
-        }
+          fromMemberTreeCache.put(node, type);
       }
       return super.visitVariable(node, type);
     }
