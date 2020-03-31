@@ -122,9 +122,9 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       // Must check because the defaults for source code must not change to avoid interfering with
       // CLIMB-to-top
       // local type inference.
-      boolean fromBytecode = ElementUtils.isElementFromByteCode(annotationScope);
+      boolean fromSource = ElementUtils.isElementFromSourceCode(annotationScope);
       return new NoLiteralDefaultApplierElement(
-          atypeFactory, annotationScope, type, applyToTypeVar, fromBytecode);
+          atypeFactory, annotationScope, type, applyToTypeVar, fromSource);
     }
 
     /**
@@ -135,16 +135,16 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     private class NoLiteralDefaultApplierElement extends DefaultApplierElement {
 
       /** Whether the target type is from bytecode. */
-      private final boolean fromBytecode;
+      private final boolean fromSource;
 
       public NoLiteralDefaultApplierElement(
           AnnotatedTypeFactory atypeFactory,
           Element annotationScope,
           AnnotatedTypeMirror type,
           boolean applyToTypeVar,
-          boolean fromBytecode) {
+          boolean fromSource) {
         super(atypeFactory, annotationScope, type, applyToTypeVar);
-        this.fromBytecode = fromBytecode;
+        this.fromSource = fromSource;
       }
 
       /**
@@ -157,7 +157,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       @Override
       protected void addAnnotation(AnnotatedTypeMirror type, AnnotationMirror qual) {
         super.addAnnotation(type, qual);
-        if (fromBytecode && type.getKind() == TypeKind.ARRAY) {
+        if (!fromSource && type.getKind() == TypeKind.ARRAY) {
           AnnotatedArrayType asArrayType = (AnnotatedArrayType) type;
           addAnnotation(asArrayType.getComponentType(), qual);
         }
