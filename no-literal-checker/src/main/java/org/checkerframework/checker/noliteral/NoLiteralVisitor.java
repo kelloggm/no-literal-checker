@@ -11,6 +11,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
+import org.checkerframework.checker.noliteral.qual.PolyConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -236,7 +237,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
         List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
         for (int i = 0; i < paramTypes.size(); i++) {
           AnnotatedTypeMirror paramType = paramTypes.get(i);
-          if (paramType.getAnnotation(MaybeDerivedFromConstant.class) != null) {
+          if (paramType.getAnnotation(PolyConstant.class) != null) {
             paramType.replaceAnnotation(atypeFactory.getNonConstant());
             replaced[i] = true;
           } else {

@@ -13,6 +13,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
+import org.checkerframework.checker.noliteral.qual.PolyConstant;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -43,6 +44,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** The canonical {@code @}{@link NonConstant} annotation. */
   private final AnnotationMirror NON_CONSTANT =
       AnnotationBuilder.fromClass(elements, NonConstant.class);
+
+  /** The canonical {@code @}{@link PolyConstant} annotation. */
+  private final AnnotationMirror POLY =
+          AnnotationBuilder.fromClass(elements, PolyConstant.class);
 
   public NoLiteralAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -75,14 +80,16 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     // Ensure that unchecked code is treated optimistically by switching the
     // standard defaults for unchecked code.
-    for (TypeUseLocation loc : QualifierDefaults.STANDARD_UNCHECKED_DEFAULTS_TOP) {
-      defaults.addUncheckedCodeDefault(NON_CONSTANT, loc);
-    }
+
+    defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.RETURN);
+
+    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.UPPER_BOUND);
+    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
 
     // Instead of iterating through QualifierDefaults.STANDARD_UNCHECKED_DEFAULTS_BOTTOM,
     // only switch the default for PARAMETER, because changing LOWER_BOUND is incompatible
     // with the other changes to type variables. See NoLiteralTypeAnnotator's documentation.
-    defaults.addUncheckedCodeDefault(MAYBE_CONSTANT, TypeUseLocation.PARAMETER);
+    defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.PARAMETER);
 
     return defaults;
   }
@@ -120,8 +127,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         AnnotatedTypeMirror type,
         boolean applyToTypeVar) {
       // Must check because the defaults for source code must not change to avoid interfering with
-      // CLIMB-to-top
-      // local type inference.
+      // CLIMB-to-top local type inference.
       boolean fromSource = ElementUtils.isElementFromSourceCode(annotationScope);
       return new NoLiteralDefaultApplierElement(
           atypeFactory, annotationScope, type, applyToTypeVar, fromSource);

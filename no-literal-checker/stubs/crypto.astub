@@ -11,10 +11,23 @@ class KeyStore {
     void store(@MaybeDerivedFromConstant OutputStream stream, @NonConstant char[] password);
 }
 
+// TODO: many of these annotations don't do anything, because SecureRandom doesn't actually
+// override the method (https://github.com/typetools/checker-framework/issues/3094).
+// java.util.Random is annotated like this instead.
 class SecureRandom {
     SecureRandom(@NonConstant byte[] seed);
     void setSeed(@NonConstant byte[] seed);
     void setSeed(@NonConstant long seed);
+    @NonConstant byte @NonConstant [] generateSeed(@MaybeDerivedFromConstant int numBytes);
+    @MaybeDerivedFromConstant String getAlgorithm();
+    static @NonConstant byte @NonConstant [] getSeed(@MaybeDerivedFromConstant int numBytes);
+    @NonConstant protected int next(@MaybeDerivedFromConstant int numBits);
+    @NonConstant double nextDouble();
+    @NonConstant float nextFloat();
+    @NonConstant double nextGaussian();
+    @NonConstant int nextInt();
+    @NonConstant int nextInt(@MaybeDerivedFromConstant int bound);
+    @NonConstant long nextLong();
 }
 
 package javax.crypto.spec;
