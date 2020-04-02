@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
-import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.checker.noliteral.qual.PolyConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;

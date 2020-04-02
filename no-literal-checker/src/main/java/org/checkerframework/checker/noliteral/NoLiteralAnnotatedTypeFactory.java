@@ -46,8 +46,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       AnnotationBuilder.fromClass(elements, NonConstant.class);
 
   /** The canonical {@code @}{@link PolyConstant} annotation. */
-  private final AnnotationMirror POLY =
-          AnnotationBuilder.fromClass(elements, PolyConstant.class);
+  private final AnnotationMirror POLY = AnnotationBuilder.fromClass(elements, PolyConstant.class);
 
   public NoLiteralAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -278,13 +277,13 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
       ExpressionTree initializer = node.getInitializer();
       if (initializer != null && type.getKind() == TypeKind.ARRAY) {
-          AnnotatedTypeMirror initializerType = getAnnotatedType(initializer);
-          NoLiteralPropagationTypeReplacer replacer = new NoLiteralPropagationTypeReplacer();
-          replacer.visit(initializerType, type);
-          // Without this, the annotated type factory will continue to use
-          // the unannotated version of lhsType for references to the variable
-          // later in the method.
-          fromMemberTreeCache.put(node, type);
+        AnnotatedTypeMirror initializerType = getAnnotatedType(initializer);
+        NoLiteralPropagationTypeReplacer replacer = new NoLiteralPropagationTypeReplacer();
+        replacer.visit(initializerType, type);
+        // Without this, the annotated type factory will continue to use
+        // the unannotated version of lhsType for references to the variable
+        // later in the method.
+        fromMemberTreeCache.put(node, type);
       }
       return super.visitVariable(node, type);
     }
