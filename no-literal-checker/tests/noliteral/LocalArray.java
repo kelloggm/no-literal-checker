@@ -31,9 +31,12 @@ class LocalArray {
         // this is fine, because nef_arr2 is @MaybeConstant String[]
         nef_arr2[1] = s;
 
-        // :: error: assignment.type.incompatible
+        // nef_arr3 will forever have the type @MaybeConstant String[]
         String[] nef_arr3 = new String[] {"foo", "bar", "baz"};
+        // even if it is re-assigned
         nef_arr3 = new String[] {s, s, s};
+        // :: error: argument.type.incompatible
+        requireNonConstantStringArray(nef_arr3);
 
         String[] nef_arr4 = new String[] {"foo", "bar", "baz"};
         // :: error: argument.type.incompatible
@@ -84,4 +87,16 @@ class LocalArray {
     @MaybeDerivedFromConstant char[] myField = {'f', 'o', 'o'};
 
     void requireNonConstantCharArray(@NonConstant char [] x) { }
+
+    void requireNonConstantStringArray(@NonConstant String [] x) { }
+
+    @MaybeDerivedFromConstant byte[] id(@MaybeDerivedFromConstant byte[] a) {
+        return a;
+    }
+
+    void reassign() {
+        String s = "foo";
+        byte[] arr = s.getBytes();
+        arr = id(arr);
+    }
 }

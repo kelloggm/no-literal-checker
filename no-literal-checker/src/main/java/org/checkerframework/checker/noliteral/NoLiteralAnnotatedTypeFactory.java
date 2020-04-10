@@ -2,9 +2,13 @@ package org.checkerframework.checker.noliteral;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.NewArrayTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
@@ -22,6 +26,7 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
@@ -47,6 +52,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /** The canonical {@code @}{@link PolyConstant} annotation. */
   private final AnnotationMirror POLY = AnnotationBuilder.fromClass(elements, PolyConstant.class);
+
+  private final Map<Element, AnnotatedTypeMirror> localArrayCache = new HashMap<>();
 
   public NoLiteralAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -269,12 +276,6 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     @Override
     public Void visitVariable(VariableTree node, AnnotatedTypeMirror type) {
-
-      VariableElement element = TreeUtils.elementFromDeclaration(node);
-      if (!ElementUtils.isEffectivelyFinal(element)) {
-        return super.visitVariable(node, type);
-      }
-
       ExpressionTree initializer = node.getInitializer();
       if (initializer != null && type.getKind() == TypeKind.ARRAY) {
         AnnotatedTypeMirror initializerType = getAnnotatedType(initializer);
@@ -284,8 +285,21 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // the unannotated version of lhsType for references to the variable
         // later in the method.
         fromMemberTreeCache.put(node, type);
+        //Element elt = TreeUtils.elementFromDeclaration(node);
+        //localArrayCache.put(elt, type);
       }
       return super.visitVariable(node, type);
+    }
+  }
+
+  @Override
+  public void addComputedTypeAnnotations(Element elt, AnnotatedTypeMirror type) {
+    super.addComputedTypeAnnotations(elt, type);
+    if (type.getKind() == TypeKind.ARRAY) {
+      Tree decl = declarationFromElement(elt);
+      if (fromMemberTreeCache.containsKey(decl)) {
+        AnnotatedTypeReplacer.replace(fromMemberTreeCache.get(decl), type);
+      }
     }
   }
 
