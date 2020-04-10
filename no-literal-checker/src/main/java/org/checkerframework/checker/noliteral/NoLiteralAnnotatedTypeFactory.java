@@ -5,13 +5,11 @@ import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
 import com.sun.source.tree.VariableTree;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -26,7 +24,6 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
-import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
@@ -36,7 +33,6 @@ import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 /** The type factory for the No Literal Checker. */
@@ -285,8 +281,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // the unannotated version of lhsType for references to the variable
         // later in the method.
         fromMemberTreeCache.put(node, type);
-        //Element elt = TreeUtils.elementFromDeclaration(node);
-        //localArrayCache.put(elt, type);
+        // Element elt = TreeUtils.elementFromDeclaration(node);
+        // localArrayCache.put(elt, type);
       }
       return super.visitVariable(node, type);
     }
