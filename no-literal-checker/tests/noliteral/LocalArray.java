@@ -42,10 +42,15 @@ class LocalArray {
         // :: error: argument.type.incompatible
         test_assign(nef_arr4);
 
-        // nef_arr5 should be @NonConstant String[]
+        // nef_arr5 is treated as possible-constant already, even though
+        // the original elements are all non-constant, because a constant
+        // is assigned into it eventually.
         String[] nef_arr5 = new String[] {s, s, s};
-        // :: error: assignment.type.incompatible
+        // :: error: argument.type.incompatible
+        requireNonConstantStringArray(nef_arr5);
         nef_arr5[1] = "foo";
+        // :: error: argument.type.incompatible
+        requireNonConstantStringArray(nef_arr5);
 
         String[] ef_arr = new String[] {"foo", "bar", "baz"};
         doNothing(ef_arr);
@@ -64,8 +69,9 @@ class LocalArray {
         @NonConstant String[][] nonconstant_array = two_d_array;
 
         String[][] two_d_array2 = new String[][] { {s, s}, {s, s}};
-        // :: error: assignment.type.incompatible
         two_d_array2[0][0] = "foo";
+        // :: error: assignment.type.incompatible
+        @NonConstant String[][] nonconstant_array2 = two_d_array2;
     }
 
     void test_toCharArray(String s) {
@@ -98,5 +104,169 @@ class LocalArray {
         String s = "foo";
         byte[] arr = s.getBytes();
         arr = id(arr);
+    }
+
+    // These arrays have constants assigned into them, so
+    // they should be @MaybeConstant int[]
+    @NonConstant int[] fillUp() {
+        int[] result = new int[10];
+        for (int i = 0; i < 10; i++) {
+            result[i] = 0;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+
+    @NonConstant int[] fillUpCompund1(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] += 1;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund2(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] -= 1;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund3(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] *= 0;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund4(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] /= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund5(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] %= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund6(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] >>= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund7(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] <<= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund8(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] &= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund9(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] ^= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpCompund10(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i] |= 5;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary1(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i]++;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary2(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            result[i]--;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary3(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            ++result[i];
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary4(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            --result[i];
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUp2(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 3; i++) {
+            result[i] = 0;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[][][] fillUp3(int x) {
+        int[][][] result = new int[3][1][1];
+        for (int i = 0; i < 3; i++) {
+            result[i][0][0] = 0;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[][][] fillUp4(int[] x) {
+        int[][][] result = new int[3][1][1];
+        for (int i = 0; i < 3; i++) {
+            result[i][0] = x;
+        }
+        return result;
     }
 }

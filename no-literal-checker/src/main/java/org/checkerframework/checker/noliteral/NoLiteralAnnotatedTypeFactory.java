@@ -1,9 +1,14 @@
 package org.checkerframework.checker.noliteral;
 
+import com.sun.source.tree.ArrayAccessTree;
+import com.sun.source.tree.AssignmentTree;
+import com.sun.source.tree.CompoundAssignmentTree;
+import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.Tree.Kind;
+import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +37,9 @@ import org.checkerframework.framework.type.visitor.AnnotatedTypeReplacer;
 import org.checkerframework.framework.util.defaults.QualifierDefaults;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.BugInCF;
 import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
 
 /** The type factory for the No Literal Checker. */
@@ -49,7 +56,16 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** The canonical {@code @}{@link PolyConstant} annotation. */
   private final AnnotationMirror POLY = AnnotationBuilder.fromClass(elements, PolyConstant.class);
 
-  private final Map<Element, AnnotatedTypeMirror> localArrayCache = new HashMap<>();
+  /**
+   * Map from expression trees representing arrays to their types
+   * after local inference from assignments. Types are updated by
+   * {@link #modifyTypeAtArrayAccess(Tree)}, and then applied by
+   * {@link #addComputedTypeAnnotations(Tree, AnnotatedTypeMirror, boolean)}.
+   *
+   * Communicating through the expressionTree cache is insufficient, because the
+   * updated types might be evicted.
+   */
+  private final Map<Tree, AnnotatedArrayType> localArrayUpdatedTypes = new HashMap<>();
 
   public NoLiteralAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -94,6 +110,76 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.PARAMETER);
 
     return defaults;
+  }
+
+  void modifyTypeAtArrayAccess(Tree tree) {
+    ExpressionTree lhs;
+    boolean rhsIsMaybeConstant;
+    switch (tree.getKind()) {
+      case ASSIGNMENT:
+        AssignmentTree assign = (AssignmentTree) tree;
+        lhs = assign.getVariable();
+        rhsIsMaybeConstant = getAnnotatedType(assign.getExpression())
+                .hasAnnotation(MAYBE_CONSTANT);
+        break;
+      case PLUS_ASSIGNMENT:
+      case MINUS_ASSIGNMENT:
+      case MULTIPLY_ASSIGNMENT:
+      case DIVIDE_ASSIGNMENT:
+      case REMAINDER_ASSIGNMENT:
+      case AND_ASSIGNMENT:
+      case OR_ASSIGNMENT:
+      case XOR_ASSIGNMENT:
+      case RIGHT_SHIFT_ASSIGNMENT:
+      case UNSIGNED_RIGHT_SHIFT_ASSIGNMENT:
+      case LEFT_SHIFT_ASSIGNMENT:
+        CompoundAssignmentTree compound = (CompoundAssignmentTree) tree;
+        lhs = compound.getVariable();
+        rhsIsMaybeConstant = getAnnotatedType(compound.getExpression())
+                .hasAnnotation(MAYBE_CONSTANT);
+        break;
+      case POSTFIX_DECREMENT:
+      case POSTFIX_INCREMENT:
+      case PREFIX_DECREMENT:
+      case PREFIX_INCREMENT:
+        UnaryTree unary = (UnaryTree) tree;
+        lhs = unary.getExpression();
+        rhsIsMaybeConstant = true; // 1 is a constant
+        break;
+      case VARIABLE:
+        return; // handled elsewhere
+      default:
+        throw new BugInCF("unexpected kind of assignment tree: " + tree.getKind());
+    }
+
+    if (lhs.getKind() == Kind.ARRAY_ACCESS) {
+      if (rhsIsMaybeConstant) {
+        ArrayAccessTree lhsArrayAccess = (ArrayAccessTree) lhs;
+        ExpressionTree array = lhsArrayAccess.getExpression();
+        // get the actual array, if there is more than one array level
+        while (array.getKind() == Kind.ARRAY_ACCESS) {
+          array = ((ArrayAccessTree) array).getExpression();
+        }
+        AnnotatedArrayType arrayType = (AnnotatedArrayType) getAnnotatedType(array);
+        AnnotatedTypeMirror componentType = arrayType.getComponentType();
+        while (componentType.getKind() == TypeKind.ARRAY) {
+          componentType = ((AnnotatedArrayType) componentType).getComponentType();
+        }
+        Tree decl = declarationFromElement(TreeUtils.elementFromUse(array));
+        if (TreeUtils.isLocalVariable(decl)) {
+          componentType.replaceAnnotation(MAYBE_CONSTANT);
+
+          // Keep track of the type of both the declaration and the expression
+          // representing the array.
+          localArrayUpdatedTypes.put(decl, arrayType);
+          localArrayUpdatedTypes.put(array, arrayType);
+
+          // also update caches, in case they are hit
+          fromMemberTreeCache.put(decl, arrayType);
+          fromExpressionTreeCache.put(array, arrayType);
+        }
+      }
+    }
   }
 
   /**
@@ -277,12 +363,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         AnnotatedTypeMirror initializerType = getAnnotatedType(initializer);
         NoLiteralPropagationTypeReplacer replacer = new NoLiteralPropagationTypeReplacer();
         replacer.visit(initializerType, type);
-        // Without this, the annotated type factory will continue to use
+        // Without this, the annotated type factory may continue to use
         // the unannotated version of lhsType for references to the variable
         // later in the method.
         fromMemberTreeCache.put(node, type);
-        // Element elt = TreeUtils.elementFromDeclaration(node);
-        // localArrayCache.put(elt, type);
       }
       return super.visitVariable(node, type);
     }
@@ -295,6 +379,17 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       Tree decl = declarationFromElement(elt);
       if (fromMemberTreeCache.containsKey(decl)) {
         AnnotatedTypeReplacer.replace(fromMemberTreeCache.get(decl), type);
+      }
+    }
+  }
+
+  @Override
+  protected void addComputedTypeAnnotations(Tree tree, AnnotatedTypeMirror type, boolean iUseFlow) {
+    super.addComputedTypeAnnotations(tree, type, iUseFlow);
+    if (type.getKind() == TypeKind.ARRAY) {
+      AnnotatedArrayType updatedType = localArrayUpdatedTypes.get(tree);
+      if (updatedType != null) {
+        AnnotatedTypeReplacer.replace(updatedType, type);
       }
     }
   }
