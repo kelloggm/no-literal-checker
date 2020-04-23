@@ -20,6 +20,7 @@ public class NoLiteralWPITest extends CheckerFrameworkPerDirectoryTest {
         "-AstubDebug",
         "-nowarn",
         "-Ainfer=stubs",
+        "-AmergeStubsWithSource",
         "-Astubs=stubs");
   }
 

@@ -13,4 +13,8 @@ class Random {
     @NonConstant int nextInt();
     @NonConstant int nextInt(@MaybeDerivedFromConstant int bound);
     @NonConstant long nextLong();
+    @NonConstant IntStream ints();
+    @NonConstant IntStream ints(@MaybeDerivedFromConstant long streamSize);
+    @NonConstant LongStream longs();
+    @NonConstant LongStream longs(@MaybeDerivedFromConstant long streamSize);
 }
