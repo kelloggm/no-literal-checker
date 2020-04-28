@@ -3,7 +3,6 @@ package org.checkerframework.checker.noliteral;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.CompoundAssignmentTree;
-import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.Tree;
@@ -57,13 +56,12 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   private final AnnotationMirror POLY = AnnotationBuilder.fromClass(elements, PolyConstant.class);
 
   /**
-   * Map from expression trees representing arrays to their types
-   * after local inference from assignments. Types are updated by
-   * {@link #modifyTypeAtArrayAccess(Tree)}, and then applied by
+   * Map from expression trees representing arrays to their types after local inference from
+   * assignments. Types are updated by {@link #modifyTypeAtArrayAccess(Tree)}, and then applied by
    * {@link #addComputedTypeAnnotations(Tree, AnnotatedTypeMirror, boolean)}.
    *
-   * Communicating through the expressionTree cache is insufficient, because the
-   * updated types might be evicted.
+   * <p>Communicating through the expressionTree cache is insufficient, because the updated types
+   * might be evicted.
    */
   private final Map<Tree, AnnotatedArrayType> localArrayUpdatedTypes = new HashMap<>();
 
@@ -119,8 +117,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       case ASSIGNMENT:
         AssignmentTree assign = (AssignmentTree) tree;
         lhs = assign.getVariable();
-        rhsIsMaybeConstant = getAnnotatedType(assign.getExpression())
-                .hasAnnotation(MAYBE_CONSTANT);
+        rhsIsMaybeConstant = getAnnotatedType(assign.getExpression()).hasAnnotation(MAYBE_CONSTANT);
         break;
       case PLUS_ASSIGNMENT:
       case MINUS_ASSIGNMENT:
@@ -135,8 +132,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       case LEFT_SHIFT_ASSIGNMENT:
         CompoundAssignmentTree compound = (CompoundAssignmentTree) tree;
         lhs = compound.getVariable();
-        rhsIsMaybeConstant = getAnnotatedType(compound.getExpression())
-                .hasAnnotation(MAYBE_CONSTANT);
+        rhsIsMaybeConstant =
+            getAnnotatedType(compound.getExpression()).hasAnnotation(MAYBE_CONSTANT);
         break;
       case POSTFIX_DECREMENT:
       case POSTFIX_INCREMENT:
@@ -368,6 +365,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // later in the method.
         fromMemberTreeCache.put(node, type);
       }
+
       return super.visitVariable(node, type);
     }
   }

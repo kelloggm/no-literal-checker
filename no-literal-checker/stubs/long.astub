@@ -4,9 +4,9 @@ import org.checkerframework.checker.noliteral.qual.*;
 
 public final class Long extends Number implements Comparable<Long> {
 
-    @Native public static final @MaybeDerivedFromConstant long MIN_VALUE = 0x8000000000000000L;
+    public static final @MaybeDerivedFromConstant long MIN_VALUE = 0x8000000000000000L;
 
-    @Native public static final @MaybeDerivedFromConstant long MAX_VALUE = 0x7fffffffffffffffL;
+    public static final @MaybeDerivedFromConstant long MAX_VALUE = 0x7fffffffffffffffL;
 
     public static @PolyConstant String toString(@PolyConstant long i, @MaybeDerivedFromConstant int radix);
 
@@ -70,7 +70,7 @@ public final class Long extends Number implements Comparable<Long> {
 
     public static @PolyConstant long remainderUnsigned(@PolyConstant long dividend, @PolyConstant long divisor);
 
-    @Native public static final @MaybeDerivedFromConstant int SIZE = 64;
+    public static final @MaybeDerivedFromConstant int SIZE = 64;
 
     public static final @MaybeDerivedFromConstant int BYTES = SIZE / Byte.SIZE;
 

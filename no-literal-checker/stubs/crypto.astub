@@ -7,8 +7,8 @@ import org.checkerframework.checker.noliteral.qual.*;
 
 class KeyStore {
     // TODO: add other KeyStore methods?
-    void load(@MaybeDerivedFromConstant InputStream stream, @NonConstant char[] password);
-    void store(@MaybeDerivedFromConstant OutputStream stream, @NonConstant char[] password);
+    void load(@MaybeDerivedFromConstant InputStream stream, @NonConstant char @NonConstant [] password);
+    void store(@MaybeDerivedFromConstant OutputStream stream, @NonConstant char @NonConstant [] password);
 }
 
 // TODO: many of these annotations don't do anything, because SecureRandom doesn't actually
@@ -21,13 +21,13 @@ class SecureRandom {
     @NonConstant byte @NonConstant [] generateSeed(@MaybeDerivedFromConstant int numBytes);
     @MaybeDerivedFromConstant String getAlgorithm();
     static @NonConstant byte @NonConstant [] getSeed(@MaybeDerivedFromConstant int numBytes);
-    @NonConstant protected int next(@MaybeDerivedFromConstant int numBits);
+    /*@NonConstant protected int next(@MaybeDerivedFromConstant int numBits);
     @NonConstant double nextDouble();
     @NonConstant float nextFloat();
     @NonConstant double nextGaussian();
     @NonConstant int nextInt();
     @NonConstant int nextInt(@MaybeDerivedFromConstant int bound);
-    @NonConstant long nextLong();
+    @NonConstant long nextLong();*/
 }
 
 package javax.crypto.spec;

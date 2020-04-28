@@ -150,7 +150,7 @@ public final class String
      * @param  value
      *         The initial value of the string
      */
-    public @PolyConstant String(@PolyConstant char[] value) {
+    public @PolyConstant String(@PolyConstant char @PolyConstant [] value) {
         this.value = Arrays.copyOf(value, value.length);
     }
 
@@ -175,7 +175,7 @@ public final class String
      *          If the {@code offset} and {@code count} arguments index
      *          characters outside the bounds of the {@code value} array
      */
-    public @PolyConstant String(@PolyConstant char value[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
+    public @PolyConstant String(@PolyConstant char @PolyConstant [] value, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
         if (offset < 0) {
             throw new StringIndexOutOfBoundsException(offset);
         }
@@ -223,7 +223,7 @@ public final class String
      *
      * @since  1.5
      */
-    public @PolyConstant String(@PolyConstant int[] codePoints, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
+    public @PolyConstant String(@PolyConstant int @PolyConstant [] codePoints, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
         if (offset < 0) {
             throw new StringIndexOutOfBoundsException(offset);
         }
@@ -308,7 +308,7 @@ public final class String
      * @see  #String(byte[])
      */
     @Deprecated
-    public @PolyConstant String(@PolyConstant byte ascii[], @MaybeDerivedFromConstant int hibyte, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] ascii, @MaybeDerivedFromConstant int hibyte, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
         checkBounds(ascii, offset, count);
         char value[] = new char[count];
 
@@ -356,21 +356,8 @@ public final class String
      * @see  #String(byte[])
      */
     @Deprecated
-    public @PolyConstant String(@PolyConstant byte[] ascii, @MaybeDerivedFromConstant int hibyte) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] ascii, @MaybeDerivedFromConstant int hibyte) {
         this(ascii, hibyte, 0, ascii.length);
-    }
-
-    /* Common private utility method used to bounds check the byte array
-     * and requested offset & length values used by the String(byte[],..)
-     * constructors.
-     */
-    private static void checkBounds(byte[] bytes, int offset, int length) {
-        if (length < 0)
-            throw new StringIndexOutOfBoundsException(length);
-        if (offset < 0)
-            throw new StringIndexOutOfBoundsException(offset);
-        if (offset > bytes.length - length)
-            throw new StringIndexOutOfBoundsException(offset + length);
     }
 
     /**
@@ -406,7 +393,7 @@ public final class String
      *
      * @since  JDK1.1
      */
-    public @PolyConstant String(@PolyConstant byte bytes[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length, @MaybeDerivedFromConstant String charsetName)
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length, @MaybeDerivedFromConstant String charsetName)
         throws UnsupportedEncodingException
     {
         if (charsetName == null)
@@ -445,7 +432,7 @@ public final class String
      *
      * @since  1.6
      */
-    public @PolyConstant String(@PolyConstant byte bytes[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length, @MaybeDerivedFromConstant Charset charset) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length, @MaybeDerivedFromConstant Charset charset) {
         if (charset == null)
             throw new NullPointerException("charset");
         checkBounds(bytes, offset, length);
@@ -475,7 +462,7 @@ public final class String
      *
      * @since  JDK1.1
      */
-    public @PolyConstant String(@PolyConstant byte bytes[], @MaybeDerivedFromConstant String charsetName)
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes, @MaybeDerivedFromConstant String charsetName)
             throws UnsupportedEncodingException {
         this(bytes, 0, bytes.length, charsetName);
     }
@@ -500,7 +487,7 @@ public final class String
      *
      * @since  1.6
      */
-    public @PolyConstant String(@PolyConstant byte bytes[], @MaybeDerivedFromConstant Charset charset) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes, @MaybeDerivedFromConstant Charset charset) {
         this(bytes, 0, bytes.length, charset);
     }
 
@@ -530,7 +517,7 @@ public final class String
      *
      * @since  JDK1.1
      */
-    public @PolyConstant String(@PolyConstant byte bytes[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int length) {
         checkBounds(bytes, offset, length);
         this.value = StringCoding.decode(bytes, offset, length);
     }
@@ -551,7 +538,7 @@ public final class String
      *
      * @since  JDK1.1
      */
-    public @PolyConstant String(@PolyConstant byte bytes[]) {
+    public @PolyConstant String(@PolyConstant byte @PolyConstant [] bytes) {
         this(bytes, 0, bytes.length);
     }
 
@@ -587,17 +574,6 @@ public final class String
      */
     public @NonConstant String(@NonConstant StringBuilder builder) {
         this.value = Arrays.copyOf(builder.getValue(), builder.length());
-    }
-
-    /*
-    * Package private constructor which shares value array for speed.
-    * this constructor is always expected to be called with share==true.
-    * a separate constructor is needed because we already have a public
-    * String(char[]) constructor that makes a copy of the given char[].
-    */
-    String(char[] value, boolean share) {
-        // assert share : "unshared not supported";
-        this.value = value;
     }
 
     /**
@@ -765,14 +741,6 @@ public final class String
     }
 
     /**
-     * Copy characters from this string into dst starting at dstBegin.
-     * This method doesn't perform any range checking.
-     */
-    void getChars(@MaybeDerivedFromConstant char dst[], @MaybeDerivedFromConstant int dstBegin) {
-        System.arraycopy(value, 0, dst, dstBegin, value.length);
-    }
-
-    /**
      * Copies characters from this string into the destination character
      * array.
      * <p>
@@ -901,7 +869,7 @@ public final class String
      *
      * @since  JDK1.1
      */
-    public @PolyConstant byte[] getBytes(@PolyConstant String this, @MaybeDerivedFromConstant String charsetName)
+    public @PolyConstant byte @PolyConstant [] getBytes(@PolyConstant String this, @MaybeDerivedFromConstant String charsetName)
             throws UnsupportedEncodingException {
         if (charsetName == null) throw new NullPointerException();
         return StringCoding.encode(charsetName, value, 0, value.length);
@@ -925,7 +893,7 @@ public final class String
      *
      * @since  1.6
      */
-    public @PolyConstant byte[] getBytes(@PolyConstant String this, @MaybeDerivedFromConstant Charset charset) {
+    public @PolyConstant byte @PolyConstant [] getBytes(@PolyConstant String this, @MaybeDerivedFromConstant Charset charset) {
         if (charset == null) throw new NullPointerException();
         return StringCoding.encode(charset, value, 0, value.length);
     }
@@ -943,7 +911,7 @@ public final class String
      *
      * @since      JDK1.1
      */
-    public @PolyConstant byte[] getBytes(@PolyConstant String this) {
+    public @PolyConstant byte @PolyConstant [] getBytes(@PolyConstant String this) {
         return StringCoding.encode(value, 0, value.length);
     }
 
@@ -1557,24 +1525,6 @@ public final class String
     }
 
     /**
-     * Handles (rare) calls of indexOf with a supplementary character.
-     */
-    private int indexOfSupplementary(@MaybeDerivedFromConstant int ch, @MaybeDerivedFromConstant int fromIndex) {
-        if (Character.isValidCodePoint(ch)) {
-            final char[] value = this.value;
-            final char hi = Character.highSurrogate(ch);
-            final char lo = Character.lowSurrogate(ch);
-            final int max = value.length - 1;
-            for (int i = fromIndex; i < max; i++) {
-                if (value[i] == hi && value[i + 1] == lo) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Returns the index within this string of the last occurrence of
      * the specified character. For values of {@code ch} in the
      * range from 0 to 0xFFFF (inclusive), the index (in Unicode code
@@ -1653,24 +1603,6 @@ public final class String
     }
 
     /**
-     * Handles (rare) calls of lastIndexOf with a supplementary character.
-     */
-    private int lastIndexOfSupplementary(int ch, int fromIndex) {
-        if (Character.isValidCodePoint(ch)) {
-            final char[] value = this.value;
-            char hi = Character.highSurrogate(ch);
-            char lo = Character.lowSurrogate(ch);
-            int i = Math.min(fromIndex, value.length - 2);
-            for (; i >= 0; i--) {
-                if (value[i] == hi && value[i + 1] == lo) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Returns the index within this string of the first occurrence of the
      * specified substring.
      *
@@ -1707,75 +1639,6 @@ public final class String
     public @PolyConstant int indexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
         return indexOf(value, 0, value.length,
                 str.value, 0, str.value.length, fromIndex);
-    }
-
-    /**
-     * Code shared by String and AbstractStringBuilder to do searches. The
-     * source is the character array being searched, and the target
-     * is the string being searched for.
-     *
-     * @param   source       the characters being searched.
-     * @param   sourceOffset offset of the source string.
-     * @param   sourceCount  count of the source string.
-     * @param   target       the characters being searched for.
-     * @param   fromIndex    the index to begin searching from.
-     */
-    static int indexOf(@MaybeDerivedFromConstant char[] source, @MaybeDerivedFromConstant int sourceOffset, @MaybeDerivedFromConstant int sourceCount,
-            @MaybeDerivedFromConstant String target, @MaybeDerivedFromConstant int fromIndex) {
-        return indexOf(source, sourceOffset, sourceCount,
-                       target.value, 0, target.value.length,
-                       fromIndex);
-    }
-
-    /**
-     * Code shared by String and StringBuffer to do searches. The
-     * source is the character array being searched, and the target
-     * is the string being searched for.
-     *
-     * @param   source       the characters being searched.
-     * @param   sourceOffset offset of the source string.
-     * @param   sourceCount  count of the source string.
-     * @param   target       the characters being searched for.
-     * @param   targetOffset offset of the target string.
-     * @param   targetCount  count of the target string.
-     * @param   fromIndex    the index to begin searching from.
-     */
-    static int indexOf(char[] source, int sourceOffset, int sourceCount,
-            char[] target, int targetOffset, int targetCount,
-            int fromIndex) {
-        if (fromIndex >= sourceCount) {
-            return (targetCount == 0 ? sourceCount : -1);
-        }
-        if (fromIndex < 0) {
-            fromIndex = 0;
-        }
-        if (targetCount == 0) {
-            return fromIndex;
-        }
-
-        char first = target[targetOffset];
-        int max = sourceOffset + (sourceCount - targetCount);
-
-        for (int i = sourceOffset + fromIndex; i <= max; i++) {
-            /* Look for first character. */
-            if (source[i] != first) {
-                while (++i <= max && source[i] != first);
-            }
-
-            /* Found first character, now look at the rest of v2 */
-            if (i <= max) {
-                int j = i + 1;
-                int end = j + targetCount - 1;
-                for (int k = targetOffset + 1; j < end && source[j]
-                        == target[k]; j++, k++);
-
-                if (j == end) {
-                    /* Found whole string. */
-                    return i - sourceOffset;
-                }
-            }
-        }
-        return -1;
     }
 
     /**
@@ -1816,83 +1679,6 @@ public final class String
     public @PolyConstant int lastIndexOf(@PolyConstant String this, @MaybeDerivedFromConstant String str, @MaybeDerivedFromConstant int fromIndex) {
         return lastIndexOf(value, 0, value.length,
                 str.value, 0, str.value.length, fromIndex);
-    }
-
-    /**
-     * Code shared by String and AbstractStringBuilder to do searches. The
-     * source is the character array being searched, and the target
-     * is the string being searched for.
-     *
-     * @param   source       the characters being searched.
-     * @param   sourceOffset offset of the source string.
-     * @param   sourceCount  count of the source string.
-     * @param   target       the characters being searched for.
-     * @param   fromIndex    the index to begin searching from.
-     */
-    static int lastIndexOf(@MaybeDerivedFromConstant char[] source, @MaybeDerivedFromConstant int sourceOffset, @MaybeDerivedFromConstant int sourceCount,
-            @MaybeDerivedFromConstant String target, @MaybeDerivedFromConstant int fromIndex) {
-        return lastIndexOf(source, sourceOffset, sourceCount,
-                       target.value, 0, target.value.length,
-                       fromIndex);
-    }
-
-    /**
-     * Code shared by String and StringBuffer to do searches. The
-     * source is the character array being searched, and the target
-     * is the string being searched for.
-     *
-     * @param   source       the characters being searched.
-     * @param   sourceOffset offset of the source string.
-     * @param   sourceCount  count of the source string.
-     * @param   target       the characters being searched for.
-     * @param   targetOffset offset of the target string.
-     * @param   targetCount  count of the target string.
-     * @param   fromIndex    the index to begin searching from.
-     */
-    static int lastIndexOf(char[] source, int sourceOffset, int sourceCount,
-                           char[] target, int targetOffset, int targetCount,
-                           int fromIndex) {
-        /*
-         * Check arguments; return immediately where possible. For
-         * consistency, don't check for null str.
-         */
-        int rightIndex = sourceCount - targetCount;
-        if (fromIndex < 0) {
-            return -1;
-        }
-        if (fromIndex > rightIndex) {
-            fromIndex = rightIndex;
-        }
-        /* Empty string always matches. */
-        if (targetCount == 0) {
-            return fromIndex;
-        }
-
-        int strLastIndex = targetOffset + targetCount - 1;
-        char strLastChar = target[strLastIndex];
-        int min = sourceOffset + targetCount - 1;
-        int i = min + fromIndex;
-
-    startSearchForLastChar:
-        while (true) {
-            while (i >= min && source[i] != strLastChar) {
-                i--;
-            }
-            if (i < min) {
-                return -1;
-            }
-            int j = i - 1;
-            int start = j - (targetCount - 1);
-            int k = strLastIndex - 1;
-
-            while (j > start) {
-                if (source[j--] != target[k--]) {
-                    i--;
-                    continue startSearchForLastChar;
-                }
-            }
-            return start - sourceOffset + 1;
-        }
     }
 
     /**
@@ -2884,7 +2670,7 @@ public final class String
      *          of this string and whose contents are initialized to contain
      *          the character sequence represented by this string.
      */
-    public @PolyConstant char[] toCharArray(@PolyConstant String this) {
+    public @PolyConstant char @PolyConstant [] toCharArray(@PolyConstant String this) {
         // Cannot use Arrays.copyOf because of class initialization order issues
         char result[] = new char[value.length];
         System.arraycopy(value, 0, result, 0, value.length);
@@ -2994,7 +2780,7 @@ public final class String
      * @return  a {@code String} that contains the characters of the
      *          character array.
      */
-    public static @PolyConstant String valueOf(@PolyConstant char data[]) {
+    public static @PolyConstant String valueOf(@PolyConstant char @PolyConstant [] data) {
         return new String(data);
     }
 
@@ -3018,7 +2804,7 @@ public final class String
      *          {@code offset+count} is larger than
      *          {@code data.length}.
      */
-    public static @PolyConstant String valueOf(@PolyConstant char data[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
+    public static @PolyConstant String valueOf(@PolyConstant char @PolyConstant [] data, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
         return new String(data, offset, count);
     }
 
@@ -3035,7 +2821,7 @@ public final class String
      *          {@code offset+count} is larger than
      *          {@code data.length}.
      */
-    public static @PolyConstant String copyValueOf(@PolyConstant char data[], @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
+    public static @PolyConstant String copyValueOf(@PolyConstant char @PolyConstant [] data, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int count) {
         // All public String constructors now copy the data.
         return new String(data, offset, count);
     }
@@ -3047,7 +2833,7 @@ public final class String
      * @return  a {@code String} that contains the characters of the
      *          character array.
      */
-    public static @PolyConstant String copyValueOf(@PolyConstant char data[]) {
+    public static @PolyConstant String copyValueOf(@PolyConstant char @PolyConstant [] data) {
         return new String(data);
     }
 
@@ -3071,7 +2857,7 @@ public final class String
      * @return  a string of length {@code 1} containing
      *          as its single character the argument {@code c}.
      */
-    public static @MaybeDerivedFromConstant String valueOf(@MaybeDerivedFromConstant char c) {
+    public static @PolyConstant String valueOf(@PolyConstant char c) {
         char data[] = {c};
         return new String(data, true);
     }

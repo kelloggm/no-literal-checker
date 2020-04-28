@@ -10,16 +10,17 @@ import org.checkerframework.framework.flow.CFValue;
 
 public class NoLiteralTransfer extends CFTransfer {
 
-    private final NoLiteralAnnotatedTypeFactory factory;
+  private final NoLiteralAnnotatedTypeFactory factory;
 
-    public NoLiteralTransfer(CFAnalysis analysis) {
-        super(analysis);
-        factory = (NoLiteralAnnotatedTypeFactory) analysis.getTypeFactory();
-    }
+  public NoLiteralTransfer(CFAnalysis analysis) {
+    super(analysis);
+    factory = (NoLiteralAnnotatedTypeFactory) analysis.getTypeFactory();
+  }
 
-    @Override
-    public TransferResult<CFValue, CFStore> visitAssignment(AssignmentNode n, TransferInput<CFValue, CFStore> in) {
-        factory.modifyTypeAtArrayAccess(n.getTree());
-        return super.visitAssignment(n, in);
-    }
+  @Override
+  public TransferResult<CFValue, CFStore> visitAssignment(
+      AssignmentNode n, TransferInput<CFValue, CFStore> in) {
+    factory.modifyTypeAtArrayAccess(n.getTree());
+    return super.visitAssignment(n, in);
+  }
 }

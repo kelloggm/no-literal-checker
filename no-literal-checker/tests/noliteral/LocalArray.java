@@ -96,7 +96,7 @@ class LocalArray {
 
     void requireNonConstantStringArray(@NonConstant String [] x) { }
 
-    @MaybeDerivedFromConstant byte[] id(@MaybeDerivedFromConstant byte[] a) {
+    @MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] id(@MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] a) {
         return a;
     }
 
