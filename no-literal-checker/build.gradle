@@ -4,6 +4,12 @@ plugins {
 
 sourceCompatibility = 1.8
 
+configurations {
+    // for putting Error Prone javac in bootclasspath for running tests
+    // on Java 8 JDKs
+    errorproneJavac
+}
+
 dependencies {
     // Must use CF local because this checker depends on features that have not yet been
     // released. TODO: update to a real CF release once it is April, 2020 or later and
@@ -22,10 +28,19 @@ dependencies {
     // For testing with a compiled version of a test on the classpath,
     // to ensure that defaults are correct.
     testImplementation files('tests/prebuilt')
+
+    implementation "com.google.errorprone:javac:9+181-r4173-1"
+    errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 }
 
 tasks.withType(JavaCompile).all {
     options.compilerArgs.add("-Xlint:all")
+}
+
+test {
+    if (!JavaVersion.current().java9Compatible) {
+        jvmArgs "-Xbootclasspath/p:${configurations.errorproneJavac.asPath}"
+    }
 }
 
 apply from: rootProject.file("gradle-mvn-push.gradle")
