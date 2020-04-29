@@ -74,17 +74,6 @@ public final class Byte extends Number implements Comparable<Byte> {
         return Integer.toString((int)b, 10);
     }
 
-    private static class ByteCache {
-        private ByteCache(){}
-
-        static final Byte cache[] = new Byte[-(-128) + 127 + 1];
-
-        static {
-            for(int i = 0; i < cache.length; i++)
-                cache[i] = new Byte((byte)(i - 128));
-        }
-    }
-
     /**
      * Returns a {@code Byte} instance representing the specified
      * {@code byte} value.
@@ -282,13 +271,6 @@ public final class Byte extends Number implements Comparable<Byte> {
     }
 
     /**
-     * The value of the {@code Byte}.
-     *
-     * @serial
-     */
-    private final byte value;
-
-    /**
      * Constructs a newly allocated {@code Byte} object that
      * represents the specified {@code byte} value.
      *
@@ -447,7 +429,4 @@ public final class Byte extends Number implements Comparable<Byte> {
      * @since 1.5
      */
     public static final @MaybeDerivedFromConstant int SIZE = 8;
-
-    /** use serialVersionUID from JDK 1.1. for interoperability */
-    private static final long serialVersionUID = -7183698231559129828L;
 }

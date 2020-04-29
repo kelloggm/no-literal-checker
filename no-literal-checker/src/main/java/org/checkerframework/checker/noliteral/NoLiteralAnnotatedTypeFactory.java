@@ -179,23 +179,31 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
   }
 
-  /**
-   * An extension to QualifierDefaults that does nothing instead of adding the standard unchecked
-   * qualifier defaults, since they override the defaults added above for PARAMETER.
-   *
-   * <p>TODO: is that a bug in QualifierDefaults? It looks like it's not supposed to override
-   * anything...
-   */
+  /** An extension to QualifierDefaults that also defaults the component types of arrays. */
   private class NoLiteralQualifierDefaults extends QualifierDefaults {
     public NoLiteralQualifierDefaults(
         Elements elements, NoLiteralAnnotatedTypeFactory noLiteralAnnotatedTypeFactory) {
       super(elements, noLiteralAnnotatedTypeFactory);
     }
 
-    /** Add standard unchecked defaults that do not conflict with previously added defaults. */
     @Override
-    public void addUncheckedStandardDefaults() {
-      // do nothing
+    public boolean applyConservativeDefaults(Element annotationScope) {
+      if (annotationScope == null) {
+        return false;
+      }
+
+      boolean isFromStubFile = isFromStubFile(annotationScope);
+      boolean isBytecode =
+          ElementUtils.isElementFromByteCode(annotationScope)
+              && declarationFromElement(annotationScope) == null
+              && !isFromStubFile;
+
+      // Correct mislabeling of JDK code as source code when using --release 8.
+      if (!isBytecode && !ElementUtils.isElementFromSourceCode(annotationScope)) {
+        return true;
+      }
+
+      return super.applyConservativeDefaults(annotationScope);
     }
 
     /**

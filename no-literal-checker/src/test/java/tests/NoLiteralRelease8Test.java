@@ -14,18 +14,18 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class NoLiteralTest extends CheckerFrameworkPerDirectoryTest {
-  public NoLiteralTest(List<File> testFiles) {
+public class NoLiteralRelease8Test extends CheckerFrameworkPerDirectoryTest {
+  public NoLiteralRelease8Test(List<File> testFiles) {
     super(
         testFiles,
         NoLiteralChecker.class,
         "noliteral",
         "-Anomsgtext",
         "-AstubDebug",
-        "--release",
-        "11",
+        "-Astubs=stubs",
         "-nowarn",
-        "-Astubs=stubs");
+        "--release",
+        "8");
   }
 
   @Parameters
