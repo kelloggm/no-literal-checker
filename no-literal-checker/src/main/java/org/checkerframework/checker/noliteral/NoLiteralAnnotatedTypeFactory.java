@@ -80,6 +80,11 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return MAYBE_CONSTANT;
   }
 
+  /** @return a canonical poly-constant AnnotationMirror */
+  public AnnotationMirror getPolyConstant() {
+    return POLY;
+  }
+
   @Override
   protected TypeAnnotator createTypeAnnotator() {
     return new ListTypeAnnotator(new NoLiteralTypeAnnotator(this), super.createTypeAnnotator());
