@@ -231,12 +231,6 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
     public boolean checkOverride() {
       // Don't issue override errors if the overridden method was defined
       // in bytecode, which uses a different defaulting scheme.
-
-      System.out.println("overridden type: " + overridden);
-      System.out.println("overriden element: " + overridden.getElement());
-      System.out.println("is overridden from source code? " +
-              ElementUtils.isElementFromSourceCode(overridden.getElement()));
-
       if (!ElementUtils.isElementFromSourceCode(overridden.getElement())) {
         boolean[] replaced = new boolean[overridden.getParameterTypes().size()];
         List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
