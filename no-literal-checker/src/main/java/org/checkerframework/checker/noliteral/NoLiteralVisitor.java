@@ -232,40 +232,14 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
       // Don't issue override errors if the overridden method was defined
       // in bytecode, which uses a different defaulting scheme.
       if (!ElementUtils.isElementFromSourceCode(overridden.getElement())) {
-        boolean[] replaced = new boolean[overridden.getParameterTypes().size()];
         List<AnnotatedTypeMirror> paramTypes = overridden.getParameterTypes();
         for (int i = 0; i < paramTypes.size(); i++) {
           AnnotatedTypeMirror paramType = paramTypes.get(i);
-          if (paramType.hasAnnotation(PolyConstant.class)) {
-            paramType.replaceAnnotation(atypeFactory.getNonConstant());
-            replaced[i] = true;
-          } else {
-            replaced[i] = false;
-          }
+          paramType.replaceAnnotation(atypeFactory.getNonConstant());
         }
-
-        boolean replacedReturn = false;
-        if (overriddenReturnType.hasAnnotation(PolyConstant.class)) {
-          overriddenReturnType.replaceAnnotation(atypeFactory.getMaybeConstant());
-          replacedReturn = true;
-        }
-
-        boolean result = super.checkOverride();
-
-        if (replacedReturn) {
-          overriddenReturnType.replaceAnnotation(atypeFactory.getPolyConstant());
-        }
-
-        for (int i = 0; i < paramTypes.size(); i++) {
-          if (replaced[i]) {
-            AnnotatedTypeMirror paramType = paramTypes.get(i);
-            paramType.replaceAnnotation(atypeFactory.getPolyConstant());
-          }
-        }
-        return result;
-      } else {
-        return super.checkOverride();
+        overriddenReturnType.replaceAnnotation(atypeFactory.getMaybeConstant());
       }
+      return super.checkOverride();
     }
   }
 }

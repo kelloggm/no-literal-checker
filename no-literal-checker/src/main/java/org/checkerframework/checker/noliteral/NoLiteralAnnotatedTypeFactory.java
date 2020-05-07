@@ -99,18 +99,15 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   protected final QualifierDefaults createQualifierDefaults() {
     QualifierDefaults defaults = new NoLiteralQualifierDefaults(elements, this);
 
-    // Ensure that unchecked code is treated optimistically by switching the
-    // standard defaults for unchecked code.
-
+    // The defaulting scheme for methods is polymorphic so long as they take/give "relevant"
+    // types - those that might be manifest literals. It is optimistic otherwise; see the
+    // NoLiteralDefaultElementApplier.
     defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.RETURN);
-
-    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.UPPER_BOUND);
-    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
-
-    // Instead of iterating through QualifierDefaults.STANDARD_UNCHECKED_DEFAULTS_BOTTOM,
-    // only switch the default for PARAMETER, because changing LOWER_BOUND is incompatible
-    // with the other changes to type variables. See NoLiteralTypeAnnotator's documentation.
     defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.PARAMETER);
+
+    // Fields are assumed to be non-constant. This default is unsound, but dataflow
+    // through fields is rare. TODO: make this sound
+    defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
 
     return defaults;
   }
@@ -260,10 +257,29 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
        */
       @Override
       protected void addAnnotation(AnnotatedTypeMirror type, AnnotationMirror qual) {
-        super.addAnnotation(type, qual);
-        if (!fromSource && type.getKind() == TypeKind.ARRAY) {
-          AnnotatedArrayType asArrayType = (AnnotatedArrayType) type;
-          addAnnotation(asArrayType.getComponentType(), qual);
+        if (fromSource) {
+          super.addAnnotation(type, qual);
+        } else {
+          if (!isRelevantClass(type.getUnderlyingType())) {
+            // only use polymorphic defaulting for possibly-literal types
+            // for other types, fall back on optimistic defaulting
+            switch (location) {
+              case RETURN:
+                qual = NON_CONSTANT;
+                break;
+              case PARAMETER:
+                qual = MAYBE_CONSTANT;
+                break;
+              default:
+                // don't change qual
+                break;
+            }
+          }
+          super.addAnnotation(type, qual);
+          if (type.getKind() == TypeKind.ARRAY) {
+            AnnotatedArrayType asArrayType = (AnnotatedArrayType) type;
+            addAnnotation(asArrayType.getComponentType(), qual);
+          }
         }
       }
     }
@@ -330,14 +346,14 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /**
    * Returns true if the given type mirror represents a declared type that could have been derived
-   * from a literal: a boxed primitive or a string. Returns false for java.lang.Boolean, because
-   * this checker does not consider booleans literals.
+   * from a literal: a boxed primitive, string, or java.lang.Object. Returns false for java.lang.Boolean,
+   * because this checker does not consider booleans literals.
    *
    * @param type a non-primitive type
    */
   private boolean isRelevantClass(TypeMirror type) {
     return (TypesUtils.isBoxedPrimitive(type) && !TypesUtils.isBooleanType(type))
-        || TypesUtils.isString(type);
+        || TypesUtils.isString(type) || TypesUtils.isObject(type);
   }
 
   private class NoLiteralTreeAnnotator extends TreeAnnotator {
