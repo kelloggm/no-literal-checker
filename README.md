@@ -1,5 +1,3 @@
-## THIS IS A PROTOTYPE: IT CAN CURRENTLY ONLY BE DEPLOYED USING A LOCALLY-BUILT VERSION OF THE CHECKER FRAMEWORK
-
 ### No Literal Checker
 
 This checker proves that no literal or literal-derived values can flow to
@@ -54,7 +52,7 @@ void foo(@MaybeDerivedFromConstant int x) { }
 The default is different in unchecked code (that is, code for which
 only the bytecode is available, such as code from a `.jar` file). The following
 optimistic defaulting rules are applied:
-* the return type of any function defined in a library is `@NonConstant`
+* the return type of any function defined in a library is `@NonConstant` if the function takes no parameters, or all of its parameters are non-constant
 * the types of a library function's formal parameters are always `@MaybeDerivedFromConstant`
 
 unless a stub file is supplied that overwrites this default
@@ -79,9 +77,23 @@ class SecretKeySpec {
 For more about stub files, see the
 [Checker Framework manual](https://checkerframework.org/manual/#stub).
 
+### Local type inference for array component types
+
+Unlike most typecheckers built on the Checker Framework, this checker includes custom rules
+for inferring the component types of local arrays. That is, the checker can infer that
+the type of `arr1` in the following code should be `@MaybeDerivedFromConstant int []`, but 
+that the type of `arr2` should be `@NonConstant int[]`:
+
+```java
+void test(@NonConstant int x) {
+  int[] arr1 = new int[] {1, 2, 3};
+  int[] arr2 = new int[] {x, x, x};
+}
+```
+
 ### Using the checker
 
-The Checker Framework manual explais how to [integrate with external tools](https://checkerframework.org/manual/#external-tools).
+The Checker Framework manual explains how to [integrate with external tools](https://checkerframework.org/manual/#external-tools).
 
 Due to the high annotation burden imposed by this checker, it is recommended that you
 run the checker using a type inference tool, such as
