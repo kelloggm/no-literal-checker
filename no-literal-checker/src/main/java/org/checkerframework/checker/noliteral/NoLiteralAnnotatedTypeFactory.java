@@ -346,14 +346,15 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /**
    * Returns true if the given type mirror represents a declared type that could have been derived
-   * from a literal: a boxed primitive, string, or java.lang.Object. Returns false for java.lang.Boolean,
-   * because this checker does not consider booleans literals.
+   * from a literal: a boxed primitive, string, or java.lang.Object. Returns false for
+   * java.lang.Boolean, because this checker does not consider booleans literals.
    *
    * @param type a non-primitive type
    */
   private boolean isRelevantClass(TypeMirror type) {
     return (TypesUtils.isBoxedPrimitive(type) && !TypesUtils.isBooleanType(type))
-        || TypesUtils.isString(type) || TypesUtils.isObject(type);
+        || TypesUtils.isString(type)
+        || TypesUtils.isObject(type);
   }
 
   private class NoLiteralTreeAnnotator extends TreeAnnotator {
