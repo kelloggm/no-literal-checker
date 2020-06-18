@@ -2,7 +2,11 @@ language: java
 install: true
 
 jdk:
-  - openjdk8
+# This checker's tests cannot run on a Java 8 JVM, because the CF testing
+# infrastructure adds an incompatible option (-source 8 -target 8) when running
+# on a Java 8 JVM. The checker's tests use --release 8 and --release 11, because
+# I ran into a bug with how those work during some experiments.
+#  - openjdk8
   - openjdk11
 
 script:
