@@ -112,7 +112,13 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return defaults;
   }
 
-  void modifyTypeAtArrayAccess(Tree tree) {
+  /**
+   * Implementation of local type inference for array component types, given a tree which might
+   * contain an assignment to an array element.
+   *
+   * @param tree a tree that represents some kind of assignment
+   */
+  /* package-private */ void modifyTypeAtArrayAccess(Tree tree) {
     ExpressionTree lhs;
     boolean rhsIsMaybeConstant;
     switch (tree.getKind()) {
@@ -423,7 +429,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * An annotated type merger that merges no literal annotations and only if the type that is
+   * An annotated type replacer that replaces no literal annotations only if the type that is
    * receiving an annotation has an @MaybeDerivedFromConstant annotation or NO annotations.
    */
   private class NoLiteralPropagationTypeReplacer extends AnnotatedTypeReplacer {
