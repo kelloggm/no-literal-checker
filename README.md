@@ -26,7 +26,7 @@ and are not interesting for the security properties this checker is meant to tra
 `null` is also *not* considered a constant; for null-tracking, see the [Nullness
 Checker](https://checkerframework.org/manual/#nullness-checker) of the Checker Framework.
 
-### How does it work?
+### Annotating your program
 
 The checker assigns each expression in the program one of
 these two types:
@@ -49,8 +49,10 @@ then the defintion of `foo` will need to be annotated like so:
 void foo(@MaybeDerivedFromConstant int x) { }
 ```
 
-The default is different in unchecked code (that is, code for which
-only the bytecode is available, such as code from a `.jar` file). The following
+### You must annotate libraries
+
+For unchecked code (that is, code for which
+only the bytecode is available, such as code from a `.jar` file), the following
 optimistic defaulting rules are applied:
 * the return type of any function defined in a library is `@NonConstant` if the function takes no parameters, or all of its parameters are non-constant
 * the types of a library function's formal parameters are always `@MaybeDerivedFromConstant`
@@ -60,8 +62,10 @@ unless a stub file is supplied that overwrites this default
 As a consequence of these rules, users MUST always write stub files for libraries
 they intend to protect -- this checker is **useless** without such a stub.
 
-For example, to enforce that calls to the `javax.crypto.spec.SecretKeySpec` constructor
-only ever provide non-constant keys, you would use a stub file like this:
+For example, [one of the No Literal Checker's built-in stub
+files](https://github.com/kelloggm/no-literal-checker/blob/prototype/no-literal-checker/stubs/crypto.astub)
+enforces that calls to the `javax.crypto.spec.SecretKeySpec` constructor only
+ever provide non-constant keys:
 
 ```java
 package javax.crypto.spec;

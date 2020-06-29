@@ -76,10 +76,16 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
    * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
    * are found.
    *
-   * <p>Usage: NonDefaultScanner scanner = new NonDefaultScanner(); scanner.visit(type); boolean
+   * <p>Usage:
+   *
+   * <pre>{@code
+   * NonDefaultScanner scanner = new NonDefaultScanner();
+   * scanner.visit(type);
+   * boolean
    * result = scanner.getResult();
+   * }</pre>
    */
-  private class NonDefaultScanner extends AnnotatedTypeScanner<Void, Void> {
+  private static class NonDefaultScanner extends AnnotatedTypeScanner<Void, Void> {
 
     private boolean result = false;
 

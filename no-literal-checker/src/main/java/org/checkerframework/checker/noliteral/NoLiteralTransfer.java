@@ -9,9 +9,9 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 
 /**
- * A transfer function for the no literal checker. This transfer function only handles updating the
- * types of array components based on assignments to array elements, as part of the no literal
- * checker's implementation of local type inference for array component types.
+ * The transfer function for the No Literal Checker. This transfer function only handles updating
+ * the types of array components based on assignments to array elements, as part of the No Literal
+ * Checker's implementation of local type inference for array component types.
  */
 public class NoLiteralTransfer extends CFTransfer {
 

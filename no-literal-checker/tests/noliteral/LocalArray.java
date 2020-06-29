@@ -117,7 +117,6 @@ class LocalArray {
         return result;
     }
 
-
     @NonConstant int[] fillUpCompund1(int x) {
         int[] result = new int[] {x, x, x};
         for (int i = 0; i < 10; i++) {

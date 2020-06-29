@@ -44,7 +44,7 @@ import org.checkerframework.javacutil.TypesUtils;
 /** The type factory for the No Literal Checker. */
 public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
-  /** The canonical {@code @}{@link @MaybeDerivedFromConstant} annotation. */
+  /** The canonical {@code @}{@link MaybeDerivedFromConstant} annotation. */
   private final AnnotationMirror MAYBE_CONSTANT =
       AnnotationBuilder.fromClass(elements, MaybeDerivedFromConstant.class);
 
@@ -70,17 +70,29 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     this.postInit();
   }
 
-  /** @return a canonical non-constant AnnotationMirror */
+  /**
+   * Returns a canonical {@code @}{@link NonConstant} annotation.
+   *
+   * @return a canonical {@code @}{@link NonConstant} annotation
+   */
   public AnnotationMirror getNonConstant() {
     return NON_CONSTANT;
   }
 
-  /** @return a canonical maybe-constant AnnotationMirror */
+  /**
+   * Returns a canonical {@code @}{@link MaybeDerivedFromConstant} annotation.
+   *
+   * @return a canonical {@code @}{@link MaybeDerivedFromConstant} annotation
+   */
   public AnnotationMirror getMaybeConstant() {
     return MAYBE_CONSTANT;
   }
 
-  /** @return a canonical poly-constant AnnotationMirror */
+  /**
+   * Returns a canonical {@code @}{@link PolyConstant} annotation.
+   *
+   * @return a canonical {@code @}{@link PolyConstant} annotation
+   */
   public AnnotationMirror getPolyConstant() {
     return POLY;
   }
@@ -266,9 +278,9 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (fromSource) {
           super.addAnnotation(type, qual);
         } else {
-          if (!isRelevantClass(type.getUnderlyingType())) {
-            // only use polymorphic defaulting for possibly-literal types
-            // for other types, fall back on optimistic defaulting
+          if (!isPossiblyLiteralType(type.getUnderlyingType())) {
+            // Only use polymorphic defaulting for possibly-literal types.
+            // For other types, fall back on optimistic defaulting.
             switch (location) {
               case RETURN:
                 qual = NON_CONSTANT;
@@ -294,14 +306,14 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected void checkInvalidOptionsInferSignatures() {
     // This checker is specifically designed to work with whole-program inference,
-    // so it can turn off the defensive check in WPI that requires certain bytecode
+    // so it can turn off the defensive check in -AinferI that requires certain bytecode
     // defaulting rules. This method is therefore overridden to do nothing.
   }
 
   /**
    * Default unannotated relevant type variables to @MaybeConstant, because it is desirable to
    * assume the worst about e.g. Lists of Strings. This will cause false positives in some cases,
-   * but is a work-around until WPI fully supports inferring annotations on type variables from
+   * but is a work-around until -Ainfer fully supports inferring annotations on type variables from
    * uses.
    */
   private class NoLiteralTypeAnnotator extends TypeAnnotator {
@@ -312,10 +324,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public Void visitDeclared(AnnotatedDeclaredType type, Void aVoid) {
       List<? extends AnnotatedTypeMirror> typeArgs = type.getTypeArguments();
-      if (typeArgs.size() > 0) {
+      if (!typeArgs.isEmpty()) {
         for (AnnotatedTypeMirror typeArg : typeArgs) {
           if (!typeArg.hasExplicitAnnotation(NON_CONSTANT)
-              && isRelevantClass(typeArg.getUnderlyingType())) {
+              && isPossiblyLiteralType(typeArg.getUnderlyingType())) {
             typeArg.replaceAnnotation(MAYBE_CONSTANT);
           }
         }
@@ -333,10 +345,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    *     have an initializer (such as {@code new int[0]})
    */
   private @Nullable AnnotationMirror lubOfArrayComponents(NewArrayTree node) {
-    AnnotationMirror result = null;
     if (node.getInitializers() == null) {
       return null;
     }
+    AnnotationMirror result = null;
     for (ExpressionTree component : node.getInitializers()) {
       AnnotationMirror componentAnno;
       if (component.getKind() == Kind.NEW_ARRAY) {
@@ -351,13 +363,13 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Returns true if the given type mirror represents a declared type that could have been derived
-   * from a literal: a boxed primitive, string, or java.lang.Object. Returns false for
+   * Returns true if the given type mirror represents a type that includes values that could be
+   * derived from a literal: a boxed primitive, string, or java.lang.Object. Returns false for
    * java.lang.Boolean, because this checker does not consider booleans literals.
    *
    * @param type a non-primitive type
    */
-  private boolean isRelevantClass(TypeMirror type) {
+  private boolean isPossiblyLiteralType(TypeMirror type) {
     return (TypesUtils.isBoxedPrimitive(type) && !TypesUtils.isBooleanType(type))
         || TypesUtils.isString(type)
         || TypesUtils.isObject(type);
