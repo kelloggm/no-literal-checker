@@ -278,9 +278,9 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (fromSource) {
           super.addAnnotation(type, qual);
         } else {
+          // Use polymorphic defaulting for possibly-literal types.
+          // For other types, use optimistic defaulting; this code implements that.
           if (!isPossiblyLiteralType(type.getUnderlyingType())) {
-            // Only use polymorphic defaulting for possibly-literal types.
-            // For other types, fall back on optimistic defaulting.
             switch (location) {
               case RETURN:
                 qual = NON_CONSTANT;
