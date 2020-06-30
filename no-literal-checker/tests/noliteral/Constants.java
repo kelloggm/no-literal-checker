@@ -11,13 +11,16 @@ class Constants {
     }
 
     void testByteArray() {
-        @MaybeDerivedFromConstant byte[] x = {0x00, 0x0f};
+        @MaybeDerivedFromConstant byte[] w = {0x00, 0x0f};
 
         // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
-        @NonConstant byte[] y = {0x00, 0x0f};
+        @NonConstant byte[] x = {0x00, 0x0f};
 
         // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
-        @NonConstant byte @NonConstant [] z = {0x00, 0x0f};
+        @NonConstant byte @NonConstant [] y = {0x00, 0x0f};
+
+        // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
+        @NonConstant byte @NonConstant [] z = {};
     }
 
     void testDouble() {
