@@ -216,10 +216,28 @@ class LocalArray {
         return result;
     }
 
+    @NonConstant int[] fillUpUnary1p(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            (result[i])++;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
     @NonConstant int[] fillUpUnary2(int x) {
         int[] result = new int[] {x, x, x};
         for (int i = 0; i < 10; i++) {
             result[i]--;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary2p(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            (result[i])--;
         }
         // :: error: return.type.incompatible
         return result;
@@ -234,12 +252,30 @@ class LocalArray {
         return result;
     }
 
+    @NonConstant int[] fillUpUnary3p(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            ++(result[i]);
+        }
+        // :: error: (return.type.incompatible)
+        return result;
+    }
+
     @NonConstant int[] fillUpUnary4(int x) {
         int[] result = new int[] {x, x, x};
         for (int i = 0; i < 10; i++) {
             --result[i];
         }
-        // :: error: return.type.incompatible
+        // :: error: (return.type.incompatible)
+        return result;
+    }
+
+    @NonConstant int[] fillUpUnary4p(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 10; i++) {
+            --(result[i]);
+        }
+        // :: error: (return.type.incompatible)
         return result;
     }
 
@@ -248,7 +284,16 @@ class LocalArray {
         for (int i = 0; i < 3; i++) {
             result[i] = 0;
         }
-        // :: error: return.type.incompatible
+        // :: error: (return.type.incompatible)
+        return result;
+    }
+
+    @NonConstant int[] fillUp2p(int x) {
+        int[] result = new int[] {x, x, x};
+        for (int i = 0; i < 3; i++) {
+            (result)[i] = 0;
+        }
+        // :: error: (return.type.incompatible)
         return result;
     }
 
@@ -261,10 +306,27 @@ class LocalArray {
         return result;
     }
 
+    @NonConstant int[][][] fillUp3p(int x) {
+        int[][][] result = new int[3][1][1];
+        for (int i = 0; i < 3; i++) {
+            (result[i][0])[0] = 0;
+        }
+        // :: error: return.type.incompatible
+        return result;
+    }
+
     @NonConstant int[][][] fillUp4(int[] x) {
         int[][][] result = new int[3][1][1];
         for (int i = 0; i < 3; i++) {
             result[i][0] = x;
+        }
+        return result;
+    }
+
+    @NonConstant int[][][] fillUp4p(int[] x) {
+        int[][][] result = new int[3][1][1];
+        for (int i = 0; i < 3; i++) {
+            (result[i])[0] = x;
         }
         return result;
     }
