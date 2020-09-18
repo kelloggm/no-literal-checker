@@ -16,10 +16,11 @@ hard-coded constant.
 Any manifest literal of types `short`, `int`, `long`, `byte`, `char`, `float`,
 `double`, or `String`, or any array of these, is considered a hard-coded constant.
 Examples include `1`, `"hello"`, and `{0xa, 0xb}`. Values derived from other hard-coded
-constants by arithmetic are also considered hard-coded. For example `1 + x` is a
-hard-coded constant, even if `x` is not. This rule is conservative: it might overestimate
-which values in the program are hard-coded. It is necessary, though, because an
-expression like `x * 0` really is hard-coded, even if `x` is not.
+constants by arithmetic-like operations (including e.g. string concatenation) are also
+considered hard-coded. For example `1 + x` is a hard-coded constant, even if `x` is not.
+This rule is conservative: it might overestimate which values in the program are hard-coded.
+It is necessary, though, because an expression like `x * 0` really is hard-coded,
+even if `x` is not.
 
 Note that `boolean`s are *not* considered constants, because they only have two values
 and are not interesting for the security properties this checker is meant to track.
@@ -84,7 +85,7 @@ For more about stub files, see the
 ### Local type inference for array component types
 
 Unlike most typecheckers built on the Checker Framework, this checker includes custom rules
-for inferring the component types of local arrays. That is, the checker can infer that
+for inferring the innermost component types of local arrays. That is, the checker can infer that
 the type of `arr1` in the following code should be `@MaybeDerivedFromConstant int []`, but 
 that the type of `arr2` should be `@NonConstant int[]`:
 

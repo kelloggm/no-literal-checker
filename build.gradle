@@ -7,6 +7,7 @@ buildscript {
 
 plugins {
     id "com.diffplug.gradle.spotless" version "3.27.1" apply false
+    // id 'maven-publish' TODO: add publishing configuration
 }
 
 

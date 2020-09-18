@@ -10,21 +10,21 @@ import javax.crypto.Cipher;
 import java.security.SecureRandom;
 
 class WithBytecodeStillPresent {
-    public static byte[] encryptByAES(String content, String password) {
-        try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128, new SecureRandom(password.getBytes()));
-            SecretKey secretKey = kgen.generateKey();
-            byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+  public static byte[] encryptByAES(String content, String password) {
+    try {
+      KeyGenerator kgen = KeyGenerator.getInstance("AES");
+      kgen.init(128, new SecureRandom(password.getBytes()));
+      SecretKey secretKey = kgen.generateKey();
+      byte[] enCodeFormat = secretKey.getEncoded();
+      SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
+      Cipher cipher = Cipher.getInstance("AES");
+      cipher.init(Cipher.ENCRYPT_MODE, key);
 
-            return cipher.doFinal(content.getBytes("utf-8"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+      return cipher.doFinal(content.getBytes("utf-8"));
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
+    return null;
+  }
 }

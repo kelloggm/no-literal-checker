@@ -6,10 +6,10 @@ import org.checkerframework.checker.index.qual.*;
 
 class AnnotationWithArgTest {
 
-    @HasSubsequence(subsequence = "this", from = "this.start", to = "this.end")
-    int [] array;
+  @HasSubsequence(subsequence = "this", from = "this.start", to = "this.end")
+  int [] array;
 
-    @IndexFor("array") int start;
+  @IndexFor("array") int start;
 
-    void test(@IndexOrHigh("array") int end) { }
+  void test(@IndexOrHigh("array") int end) { }
 }

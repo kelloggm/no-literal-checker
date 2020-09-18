@@ -5,15 +5,15 @@
 import org.checkerframework.checker.noliteral.qual.*;
 
 class Booleans {
-    void test(boolean b) { }
+  void test(boolean b) { }
 
-    void a() {
-        test(false);
-        test(true);
+  void a() {
+    test(false);
+    test(true);
 
-        @NonConstant boolean b = false;
-        @NonConstant boolean a = true;
-        @MaybeDerivedFromConstant boolean c = false;
-        @MaybeDerivedFromConstant boolean d = true;
-    }
+    @NonConstant boolean b = false;
+    @NonConstant boolean a = true;
+    @MaybeDerivedFromConstant boolean c = false;
+    @MaybeDerivedFromConstant boolean d = true;
+  }
 }

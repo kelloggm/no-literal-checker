@@ -3,8 +3,8 @@
 import org.checkerframework.checker.noliteral.qual.*;
 
 public class ToString {
-    @Override
-    public @MaybeDerivedFromConstant String toString() {
-        return "to string";
-    }
+  @Override
+  public @MaybeDerivedFromConstant String toString() {
+    return "to string";
+  }
 }

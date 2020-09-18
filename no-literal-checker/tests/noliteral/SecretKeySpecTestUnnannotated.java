@@ -7,12 +7,12 @@ import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 
 public class SecretKeySpecTestUnnannotated {
 
-    private byte[] getKey() {
-        // :: error: return.type.incompatible
-        return new byte [] {0xa, 0xb};
-    }
+  private byte[] getKey() {
+    // :: error: return.type.incompatible
+    return new byte [] {0xa, 0xb};
+  }
 
-    public SecretKeySpec getKeySpec() {
-        return new SecretKeySpec(getKey(), "AES");
-    }
+  public SecretKeySpec getKeySpec() {
+    return new SecretKeySpec(getKey(), "AES");
+  }
 }

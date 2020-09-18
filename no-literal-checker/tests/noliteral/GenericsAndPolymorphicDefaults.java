@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.ArrayList;
 
 class GenericsAndPolymorphicDefaults {
-    void test() throws Exception {
-        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        List<Cipher> myList = new ArrayList<Cipher>();
-        myList.add(c);
-    }
+  void test() throws Exception {
+    Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    List<Cipher> myList = new ArrayList<Cipher>();
+    myList.add(c);
+  }
 
-    void test2(Cipher c) {
-        List<Cipher> myList = new ArrayList<Cipher>();
-        myList.add(c);
-    }
+  void test2(Cipher c) {
+    List<Cipher> myList = new ArrayList<Cipher>();
+    myList.add(c);
+  }
 }

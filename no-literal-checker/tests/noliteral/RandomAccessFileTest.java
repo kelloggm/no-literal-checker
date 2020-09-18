@@ -10,21 +10,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 class RandomAccessFileTest {
-    void test(String encodedCert) {
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile("foo.txt", "rw")) {
-            randomAccessFile.write("-----BEGIN CERTIFICATE-----\n".getBytes());
-            int i = 0;
-            for (; i<(encodedCert.length() - (encodedCert.length() % 64)); i+=64) {
-                randomAccessFile.write(encodedCert.substring(i, i + 64).getBytes());
-                randomAccessFile.write("\n".getBytes());
-            }
-            randomAccessFile.write(encodedCert.substring(i, encodedCert.length()).getBytes());
-            randomAccessFile.write("\n".getBytes());
-            randomAccessFile.write("-----END CERTIFICATE-----".getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+  void test(String encodedCert) {
+    try (RandomAccessFile randomAccessFile = new RandomAccessFile("foo.txt", "rw")) {
+      randomAccessFile.write("-----BEGIN CERTIFICATE-----\n".getBytes());
+      int i = 0;
+      for (; i<(encodedCert.length() - (encodedCert.length() % 64)); i+=64) {
+        randomAccessFile.write(encodedCert.substring(i, i + 64).getBytes());
+        randomAccessFile.write("\n".getBytes());
+      }
+      randomAccessFile.write(encodedCert.substring(i, encodedCert.length()).getBytes());
+      randomAccessFile.write("\n".getBytes());
+      randomAccessFile.write("-----END CERTIFICATE-----".getBytes());
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+  }
 }

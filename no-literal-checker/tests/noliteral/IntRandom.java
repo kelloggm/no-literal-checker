@@ -13,19 +13,19 @@ import java.util.Random;
 import java.security.SecureRandom;
 
 class IntRandom {
-    void test() {
-        @MaybeDerivedFromConstant int x = new Random().nextInt(4);
+  void test() {
+    @MaybeDerivedFromConstant int x = new Random().nextInt(4);
 
-        @NonConstant int y = new Random().nextInt(5);
-    }
+    @NonConstant int y = new Random().nextInt(5);
+  }
 
-    void testSecureRandom() {
-        SecureRandom r = new SecureRandom();
+  void testSecureRandom() {
+    SecureRandom r = new SecureRandom();
 
-        @MaybeDerivedFromConstant int x = r.nextInt(4);
-        @NonConstant int y = r.nextInt(5);
+    @MaybeDerivedFromConstant int x = r.nextInt(4);
+    @NonConstant int y = r.nextInt(5);
 
-        @MaybeDerivedFromConstant int x2 = new SecureRandom().nextInt(4);
-        @NonConstant int y2 = new SecureRandom().nextInt(5);
-    }
+    @MaybeDerivedFromConstant int x2 = new SecureRandom().nextInt(4);
+    @NonConstant int y2 = new SecureRandom().nextInt(5);
+  }
 }

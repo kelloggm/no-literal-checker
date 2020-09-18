@@ -10,70 +10,70 @@ import org.checkerframework.checker.noliteral.qual.*;
  */
 public final class DummyConstants {
 
-    /**
-     * A hard-coded string for testing
-     */
-    public static final @MaybeDerivedFromConstant String SECRET = "sfsdfs";
+  /**
+   * A hard-coded string for testing
+   */
+  public static final @MaybeDerivedFromConstant String SECRET = "sfsdfs";
+  // :: error: assignment.type.incompatible
+  public static final @NonConstant String SECRET2 = "sfsdfs";
+
+  /**
+   * A hard-coded byte[] for testing
+   */
+  static final @MaybeDerivedFromConstant byte[] KEY = {11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
+  private final @MaybeDerivedFromConstant byte[] key;
+
+  // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
+  static final @NonConstant byte[] KEY2 = {11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
+  private final @NonConstant byte[] key2;
+
+  public DummyConstants() {
+    key = new byte[]{11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
+
     // :: error: assignment.type.incompatible
-    public static final @NonConstant String SECRET2 = "sfsdfs";
+    key2 = new byte[]{11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
+  }
 
-    /**
-     * A hard-coded byte[] for testing
-     */
-    static final @MaybeDerivedFromConstant byte[] KEY = {11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
-    private final @MaybeDerivedFromConstant byte[] key;
+  /**
+   * Get the hard-coded string
+   *
+   * @return the hard-coded string
+   */
+  public static @MaybeDerivedFromConstant String getConstant() {
+    return SECRET;
+  }
 
-    // :: error: assignment.type.incompatible :: error: array.initializer.type.incompatible
-    static final @NonConstant byte[] KEY2 = {11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
-    private final @NonConstant byte[] key2;
+  public static @NonConstant String getConstant2() {
+    // :: error: return.type.incompatible
+    return SECRET;
+  }
 
-    public DummyConstants() {
-        key = new byte[]{11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
+  /**
+   * Get a copy of the hard-coded byte[] which is a static field (Arrays.copyOf is specified as flow-through method)
+   *
+   * @return copy of the hard-coded byte[] which is a static field
+   */
+  public static @MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] getBytes() {
+    return Arrays.copyOf(KEY, KEY.length + 1);
+  }
 
-        // :: error: assignment.type.incompatible
-        key2 = new byte[]{11, -19, -79, 58, -21, 90, 20, 85, 59, -15, -11, 89, 112, -65, 105};
-    }
+  public static @NonConstant byte @NonConstant [] getBytes2() {
+    // :: error: return.type.incompatible
+    return Arrays.copyOf(KEY, KEY.length + 1);
+  }
 
-    /**
-     * Get the hard-coded string
-     *
-     * @return the hard-coded string
-     */
-    public static @MaybeDerivedFromConstant String getConstant() {
-        return SECRET;
-    }
+  /**
+   * Get a copy of the hard-coded byte[] which is an instance field
+   *
+   * @return copy of the hard-coded byte[] which is an instance field
+   */
+  public @MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] getKey() {
+    return Arrays.copyOf(key, key.length + 1);
+  }
 
-    public static @NonConstant String getConstant2() {
-        // :: error: return.type.incompatible
-        return SECRET;
-    }
-
-    /**
-     * Get a copy of the hard-coded byte[] which is a static field (Arrays.copyOf is specified as flow-through method)
-     *
-     * @return copy of the hard-coded byte[] which is a static field
-     */
-    public static @MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] getBytes() {
-        return Arrays.copyOf(KEY, KEY.length + 1);
-    }
-
-    public static @NonConstant byte @NonConstant [] getBytes2() {
-        // :: error: return.type.incompatible
-        return Arrays.copyOf(KEY, KEY.length + 1);
-    }
-
-    /**
-     * Get a copy of the hard-coded byte[] which is an instance field
-     *
-     * @return copy of the hard-coded byte[] which is an instance field
-     */
-    public @MaybeDerivedFromConstant byte @MaybeDerivedFromConstant [] getKey() {
-        return Arrays.copyOf(key, key.length + 1);
-    }
-
-    public @NonConstant byte @NonConstant [] getKey2() {
-        // :: error: return.type.incompatible
-        return Arrays.copyOf(key, key.length + 1);
-    }
+  public @NonConstant byte @NonConstant [] getKey2() {
+    // :: error: return.type.incompatible
+    return Arrays.copyOf(key, key.length + 1);
+  }
 
 }

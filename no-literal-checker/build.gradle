@@ -38,8 +38,6 @@ test {
     }
 }
 
-apply from: rootProject.file("gradle-mvn-push.gradle")
-
 // run google java format to enforce style
 spotless {
     // uncomment this line to temporarily disable spotless (i.e. when debugging)

@@ -3,26 +3,21 @@ package org.checkerframework.checker.noliteral;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
-import org.checkerframework.checker.noliteral.qual.NonConstant;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
-import org.checkerframework.framework.type.AnnotatedTypeParameterBounds;
 import org.checkerframework.framework.type.TypeHierarchy;
-import org.checkerframework.framework.type.visitor.AnnotatedTypeScanner;
 import org.checkerframework.javacutil.ElementUtils;
 
 /**
  * This visitor has a lot of code in it that permits this type system to operate as expected with
- * the bottom type as its default. Most of that code is either from or inspired by the AWS Data
- * Classification Checker (https://github.com/awslabs/data-classification-checker).
+ * the bottom type as its default.
  */
 public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFactory> {
   /**
@@ -34,14 +29,11 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * Overrides the default lower bound for exception parameters. The usual default for exception
-   * parameter lower bounds is top, which prevents the checker from defaulting exception parameters
-   * to @NonConstant. Overriding this method changes the expected lower bound to be @NonConstant,
-   * which prevents false positives.
+   * Change the default for exception parameter lower bounds to NonConstant, to prevent false
+   * positives. I think it might be a bug in the Checker Framework that these locations are always
+   * defaulted to top - that doesn't make sense for checkers that use bottom as the default.
    *
-   * <p>Stolen shamelessly from https://github.com/awslabs/data-classification-checker
-   *
-   * @return a singleton set containing the @NonConstant annotation
+   * @return a set containing only the @NonConstant annotation
    */
   @Override
   protected Set<? extends AnnotationMirror> getExceptionParameterLowerBoundAnnotations() {
@@ -49,13 +41,11 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   }
 
   /**
-   * Overrides the default upper bound for thrown exceptions. By default, this is the same as the
-   * result of getExceptionParameterLowerBoundAnnotations, which defaults to top. This is overridden
-   * to keep the default top, since that other method is also overridden.
+   * The Checker Framework's default implementation of this method defers to {@code
+   * #getExceptionParameterLowerBoundAnnotations}. That is a bug; this method should always return
+   * the set containing top, regardless of what that method returns. This implementation does so.
    *
-   * <p>Stolen shamelessly from https://github.com/awslabs/data-classification-checker
-   *
-   * @return a singleton set containing the @MaybeDerivedFromConstant annotation
+   * @return a set containing only the @MaybeDerivedFromConstant annotation
    */
   @Override
   protected Set<? extends AnnotationMirror> getThrowUpperBoundAnnotations() {
@@ -70,87 +60,6 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
   @Override
   public Void visitAnnotation(AnnotationTree node, Void p) {
     return null;
-  }
-
-  /**
-   * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
-   * are found.
-   *
-   * <p>Usage:
-   *
-   * <pre>{@code
-   * NonDefaultScanner scanner = new NonDefaultScanner();
-   * scanner.visit(type);
-   * boolean
-   * result = scanner.getResult();
-   * }</pre>
-   */
-  private static class NonDefaultScanner extends AnnotatedTypeScanner<Void, Void> {
-
-    private boolean result = false;
-
-    /**
-     * After calling visit(), this will return whether or not the visited type(s) have any non
-     * default annotations.
-     */
-    public boolean getResult() {
-      return result;
-    }
-
-    @Override
-    protected Void scan(AnnotatedTypeMirror type, Void aVoid) {
-      if (!type.hasAnnotation(NonConstant.class)) {
-        result = true;
-      }
-      return super.scan(type, aVoid);
-    }
-  }
-
-  /**
-   * Searches through a type for user-written (i.e. non-default) annotations. Returns true if any
-   * are found.
-   *
-   * @param atm the type to search
-   * @return true if the type or any of its components has a non-default annotation
-   */
-  private boolean hasNonDefault(final AnnotatedTypeMirror atm) {
-    NonDefaultScanner scanner = new NonDefaultScanner();
-    scanner.visit(atm);
-    return scanner.getResult();
-  }
-
-  /**
-   * This checker defaults implicit upper bounds of type variables to @NonConstant. This is the
-   * correct thing to do in unannotated code, but causes false positive errors whenever a user
-   * writes a type annotation on the upper bound of a type variable (for instance, by declaring a
-   * list of constant strings).
-   *
-   * <p>For example, without overriding this method, this code would not typecheck:
-   *
-   * <p>{@code List<@MaybeDerivedFromConstant String> list = new ArrayList<>();}
-   *
-   * <p>Since this is common, this code disables checking that type arguments supplied to a type or
-   * a method invocation are within the bounds of the type variables as declared for user-written
-   * annotations. Stolen shamelessly from https://github.com/awslabs/data-classification-checker
-   */
-  @Override
-  protected void checkTypeArguments(
-      final Tree toptree,
-      final List<? extends AnnotatedTypeParameterBounds> paramBounds,
-      final List<? extends AnnotatedTypeMirror> typeargs,
-      final List<? extends Tree> typeargTrees) {
-    List<AnnotatedTypeParameterBounds> newParamBounds = new ArrayList<>();
-    List<AnnotatedTypeMirror> newTypeArgs = new ArrayList<>();
-    for (int i = 0; i < typeargs.size(); i++) {
-      AnnotatedTypeMirror atm = typeargs.get(i);
-      if (!hasNonDefault(atm)) {
-        newParamBounds.add(paramBounds.get(i));
-        newTypeArgs.add(atm);
-      }
-    }
-    if (!newTypeArgs.isEmpty()) {
-      super.checkTypeArguments(toptree, newParamBounds, newTypeArgs, typeargTrees);
-    }
   }
 
   /**
@@ -176,7 +85,7 @@ public class NoLiteralVisitor extends BaseTypeVisitor<NoLiteralAnnotatedTypeFact
 
   /**
    * The standard override checker is replaced so that no override.param.invalid errors are issued
-   * when overriding methods defined in bytecode (which therefore use a different, incompatible
+   * when overriding methods defined in bytecode (because bytecode uses a different, incompatible
    * defaulting scheme).
    */
   @Override

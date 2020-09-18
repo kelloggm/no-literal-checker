@@ -19,60 +19,60 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 
 class KeystoreCorrectExample {
-    URL cacerts;
-    public void allTogether() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        String type = "JKS";
-        SecureRandom random = new SecureRandom();
-        String password = String.valueOf(random.ints());
-        byte [] keyBytes = password.getBytes("UTF-8");
+  URL cacerts;
+  public void allTogether() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+    String type = "JKS";
+    SecureRandom random = new SecureRandom();
+    String password = String.valueOf(random.ints());
+    byte [] keyBytes = password.getBytes("UTF-8");
 
-        KeyStore ks = KeyStore.getInstance(type);
-        cacerts = new URL("https://www.google.com");
-        // false positive here
-        ks.load(cacerts.openStream(), new String(keyBytes).toCharArray());
-    }
+    KeyStore ks = KeyStore.getInstance(type);
+    cacerts = new URL("https://www.google.com");
+    // false positive here
+    ks.load(cacerts.openStream(), new String(keyBytes).toCharArray());
+  }
 
-    public void allTogether2() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        String type = "JKS";
-        SecureRandom random = new SecureRandom();
-        @NonConstant String password = String.valueOf(random.ints());
-        @NonConstant byte @NonConstant [] keyBytes = password.getBytes("UTF-8");
+  public void allTogether2() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+    String type = "JKS";
+    SecureRandom random = new SecureRandom();
+    @NonConstant String password = String.valueOf(random.ints());
+    @NonConstant byte @NonConstant [] keyBytes = password.getBytes("UTF-8");
 
-        KeyStore ks = KeyStore.getInstance(type);
-        cacerts = new URL("https://www.google.com");
-        @NonConstant char @NonConstant [] chars = new String(keyBytes).toCharArray();
-        ks.load(cacerts.openStream(), chars);
-    }
+    KeyStore ks = KeyStore.getInstance(type);
+    cacerts = new URL("https://www.google.com");
+    @NonConstant char @NonConstant [] chars = new String(keyBytes).toCharArray();
+    ks.load(cacerts.openStream(), chars);
+  }
 
-    void test_randomInts() {
-        @NonConstant IntStream ints = new SecureRandom().ints();
-    }
+  void test_randomInts() {
+    @NonConstant IntStream ints = new SecureRandom().ints();
+  }
 
-    void test_valueOf(@NonConstant IntStream ints) {
-        @NonConstant String password = String.valueOf(ints);
-    }
+  void test_valueOf(@NonConstant IntStream ints) {
+    @NonConstant String password = String.valueOf(ints);
+  }
 
-    void test_getBytes(@NonConstant String password) throws Exception {
-        @NonConstant byte @NonConstant [] keyBytes = password.getBytes("UTF-8");
-    }
+  void test_getBytes(@NonConstant String password) throws Exception {
+    @NonConstant byte @NonConstant [] keyBytes = password.getBytes("UTF-8");
+  }
 
-    void test_getBytes2(@NonConstant String password) throws Exception {
-        byte [] keyBytes = password.getBytes("UTF-8");
-    }
+  void test_getBytes2(@NonConstant String password) throws Exception {
+    byte [] keyBytes = password.getBytes("UTF-8");
+  }
 
-    void test_newString(@NonConstant byte @NonConstant [] keyBytes) {
-        @NonConstant String result = new String(keyBytes);
-    }
+  void test_newString(@NonConstant byte @NonConstant [] keyBytes) {
+    @NonConstant String result = new String(keyBytes);
+  }
 
-    void test_toCharArray(@NonConstant String result) {
-        @NonConstant char @NonConstant [] chars = result.toCharArray();
-    }
+  void test_toCharArray(@NonConstant String result) {
+    @NonConstant char @NonConstant [] chars = result.toCharArray();
+  }
 
-    void test_newString_toCharArray(@NonConstant byte @NonConstant [] keyBytes) {
-        @NonConstant char @NonConstant [] chars = new String(keyBytes).toCharArray();
-    }
+  void test_newString_toCharArray(@NonConstant byte @NonConstant [] keyBytes) {
+    @NonConstant char @NonConstant [] chars = new String(keyBytes).toCharArray();
+  }
 
-    void test_load(@NonConstant char @NonConstant [] chars, KeyStore ks) throws Exception {
-        ks.load(null, chars);
-    }
+  void test_load(@NonConstant char @NonConstant [] chars, KeyStore ks) throws Exception {
+    ks.load(null, chars);
+  }
 }

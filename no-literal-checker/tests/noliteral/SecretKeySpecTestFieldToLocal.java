@@ -13,42 +13,42 @@ import org.checkerframework.checker.noliteral.qual.MaybeDerivedFromConstant;
 
 public class SecretKeySpecTestFieldToLocal {
 
-    private static final @MaybeDerivedFromConstant String KEY = "kj34PXF65ze70uFG";
+  private static final @MaybeDerivedFromConstant String KEY = "kj34PXF65ze70uFG";
 
-    public SecretKeySpec getKeySpecBad() {
-        byte[] theBytes = new byte[0];
+  public SecretKeySpec getKeySpecBad() {
+    byte[] theBytes = new byte[0];
 
-        try {
-            // :: error: assignment.type.incompatible
-            theBytes = KEY.getBytes("utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        // it would be better if the error was issued here
-        return new SecretKeySpec(theBytes, "AES");
+    try {
+      // :: error: assignment.type.incompatible
+      theBytes = KEY.getBytes("utf-8");
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
 
-    // CORRECT CODE FOLLOWS
+    // it would be better if the error was issued here
+    return new SecretKeySpec(theBytes, "AES");
+  }
 
-    private String secretKey;
+  // CORRECT CODE FOLLOWS
 
-    public SecretKeySpec getKeySpecOk() {
-        if (secretKey != null) {
-            byte[] theBytes = new byte[0];
-            try {
-                //
-                theBytes = secretKey.getBytes("utf-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return new SecretKeySpec(theBytes, "AES");
-        } else {
-            return null;
-        }
+  private String secretKey;
+
+  public SecretKeySpec getKeySpecOk() {
+    if (secretKey != null) {
+      byte[] theBytes = new byte[0];
+      try {
+        //
+        theBytes = secretKey.getBytes("utf-8");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+      return new SecretKeySpec(theBytes, "AES");
+    } else {
+      return null;
     }
+  }
 
-    public void setSecretKey(String theKey) {
-        secretKey = theKey;
-    }
+  public void setSecretKey(String theKey) {
+    secretKey = theKey;
+  }
 }

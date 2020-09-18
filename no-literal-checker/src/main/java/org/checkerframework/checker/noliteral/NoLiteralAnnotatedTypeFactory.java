@@ -117,8 +117,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.RETURN);
     defaults.addUncheckedCodeDefault(POLY, TypeUseLocation.PARAMETER);
 
-    // Fields are assumed to be non-constant. This default is unsound, but dataflow
-    // through fields is rare. TODO: make this sound
+    // Fields are assumed to be non-constant. This unchecked code default is unsound, but dataflow
+    // through fields in classes that are only available as bytecode is rare. TODO: make this sound
     defaults.addUncheckedCodeDefault(NON_CONSTANT, TypeUseLocation.FIELD);
 
     return defaults;
@@ -164,27 +164,30 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         rhsIsMaybeConstant = true; // 1 is a constant
         break;
       case VARIABLE:
-        return; // handled elsewhere
+        return; // handled elsewhere at
+        // NoLiteralAnnotatedTypeFactory.NoLiteralTreeAnnotator#visitVariable
       default:
         throw new BugInCF("unexpected kind of assignment tree: " + tree.getKind());
     }
 
+    lhs = TreeUtils.withoutParens(lhs);
+
     if (lhs.getKind() == Kind.ARRAY_ACCESS) {
       if (rhsIsMaybeConstant) {
         ArrayAccessTree lhsArrayAccess = (ArrayAccessTree) lhs;
-        ExpressionTree array = lhsArrayAccess.getExpression();
+        ExpressionTree array = TreeUtils.withoutParens(lhsArrayAccess.getExpression());
         // get the actual array, if there is more than one array level
         while (array.getKind() == Kind.ARRAY_ACCESS) {
-          array = ((ArrayAccessTree) array).getExpression();
+          array = TreeUtils.withoutParens(((ArrayAccessTree) array).getExpression());
         }
         AnnotatedArrayType arrayType = (AnnotatedArrayType) getAnnotatedType(array);
-        AnnotatedTypeMirror componentType = arrayType.getComponentType();
-        while (componentType.getKind() == TypeKind.ARRAY) {
-          componentType = ((AnnotatedArrayType) componentType).getComponentType();
+        AnnotatedTypeMirror innermostComponentType = arrayType.getComponentType();
+        while (innermostComponentType.getKind() == TypeKind.ARRAY) {
+          innermostComponentType = ((AnnotatedArrayType) innermostComponentType).getComponentType();
         }
         Tree decl = declarationFromElement(TreeUtils.elementFromUse(array));
         if (TreeUtils.isLocalVariable(decl)) {
-          componentType.replaceAnnotation(MAYBE_CONSTANT);
+          innermostComponentType.replaceAnnotation(MAYBE_CONSTANT);
 
           // Keep track of the type of both the declaration and the expression
           // representing the array.
@@ -253,7 +256,7 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
      */
     private class NoLiteralDefaultApplierElement extends DefaultApplierElement {
 
-      /** Whether the target type is from bytecode. */
+      /** Whether the target type is from source code. */
       private final boolean fromSource;
 
       public NoLiteralDefaultApplierElement(
@@ -268,7 +271,10 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
       /**
        * Add the qualifier to the type if it does not already have an annotation in the same
-       * hierarchy as qual.
+       * hierarchy as qual, if the target is in source code. If not, and the underlying type of
+       * {@code type} cannot be a literal type (and is therefore not subject to polymorphic
+       * defaulting), add optimistic defaults. This version of the method also descends through
+       * arrays.
        *
        * @param type type to add qual
        * @param qual annotation to add
@@ -278,7 +284,8 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (fromSource) {
           super.addAnnotation(type, qual);
         } else {
-          // Use polymorphic defaulting for possibly-literal types.
+          // Use polymorphic defaulting for possibly-literal types (which is implemented by
+          // NoLiteralAnnotatedTypeFactory#createQualifierDefaults).
           // For other types, use optimistic defaulting; this code implements that.
           if (!isPossiblyLiteralType(type.getUnderlyingType())) {
             switch (location) {
@@ -348,8 +355,13 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (node.getInitializers() == null) {
       return null;
     }
+    // Treat an empty array as possibly constant
+    if (node.getInitializers().isEmpty()) {
+      return this.getMaybeConstant();
+    }
     AnnotationMirror result = null;
     for (ExpressionTree component : node.getInitializers()) {
+      component = TreeUtils.withoutParens(component);
       AnnotationMirror componentAnno;
       if (component.getKind() == Kind.NEW_ARRAY) {
         componentAnno = lubOfArrayComponents((NewArrayTree) component);
@@ -364,15 +376,19 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
   /**
    * Returns true if the given type mirror represents a type that includes values that could be
-   * derived from a literal: a boxed primitive, string, or java.lang.Object. Returns false for
-   * java.lang.Boolean, because this checker does not consider booleans literals.
+   * derived from a literal: a boxed primitive, string, java.lang.Object, java.lang.Number,
+   * java.lang.Comparable, or java.lang.Serializable. Returns false for java.lang.Boolean, because
+   * this checker does not consider booleans literals.
    *
    * @param type a non-primitive type
    */
   private boolean isPossiblyLiteralType(TypeMirror type) {
     return (TypesUtils.isBoxedPrimitive(type) && !TypesUtils.isBooleanType(type))
         || TypesUtils.isString(type)
-        || TypesUtils.isObject(type);
+        || TypesUtils.isObject(type)
+        || TypesUtils.isDeclaredOfName(type, "java.lang.Number")
+        || TypesUtils.isDeclaredOfName(type, "java.lang.Comparable")
+        || TypesUtils.isDeclaredOfName(type, "java.lang.Serializable");
   }
 
   private class NoLiteralTreeAnnotator extends TreeAnnotator {
@@ -392,11 +408,11 @@ public class NoLiteralAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       }
 
       // Find the innermost component type.
-      AnnotatedTypeMirror componentType = ((AnnotatedArrayType) type).getComponentType();
-      while (componentType.getKind() == TypeKind.ARRAY) {
-        componentType = ((AnnotatedArrayType) componentType).getComponentType();
+      AnnotatedTypeMirror innermostComponentType = ((AnnotatedArrayType) type).getComponentType();
+      while (innermostComponentType.getKind() == TypeKind.ARRAY) {
+        innermostComponentType = ((AnnotatedArrayType) innermostComponentType).getComponentType();
       }
-      componentType.replaceAnnotation(lubOfLeafComponents);
+      innermostComponentType.replaceAnnotation(lubOfLeafComponents);
 
       return super.visitNewArray(node, type);
     }
