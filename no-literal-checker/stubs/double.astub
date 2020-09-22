@@ -1,0 +1,64 @@
+package java.lang;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+public final class Double extends Number implements Comparable<Double> {
+
+    public static final @MaybeDerivedFromConstant double POSITIVE_INFINITY = 1.0 / 0.0;
+
+    public static final @MaybeDerivedFromConstant double NEGATIVE_INFINITY = -1.0 / 0.0;
+
+    public static final @MaybeDerivedFromConstant double NaN = 0.0d / 0.0;
+
+    public static final @MaybeDerivedFromConstant double MAX_VALUE = 0x1.fffffffffffffP+1023; // 1.7976931348623157e+308
+
+    public static final @MaybeDerivedFromConstant double MIN_NORMAL = 0x1.0p-1022; // 2.2250738585072014E-308
+
+    public static final @MaybeDerivedFromConstant double MIN_VALUE = 0x0.0000000000001P-1022; // 4.9e-324
+
+    public static final @MaybeDerivedFromConstant int MAX_EXPONENT = 1023;
+
+    public static final @MaybeDerivedFromConstant int MIN_EXPONENT = -1022;
+
+    public static final @MaybeDerivedFromConstant int SIZE = 64;
+
+    public static @PolyConstant String toString(@PolyConstant double d);
+
+    public static @PolyConstant String toHexString(@PolyConstant double d);
+
+    public static @PolyConstant Double valueOf(@PolyConstant String s);
+
+    public static @PolyConstant Double valueOf(@PolyConstant double d);
+
+    public static @PolyConstant double parseDouble(@PolyConstant String s);
+
+    public @PolyConstant Double(@PolyConstant double value);
+
+    public @PolyConstant Double(@PolyConstant String s);
+
+    public @PolyConstant String toString(@PolyConstant Double this);
+
+    public @PolyConstant byte byteValue(@PolyConstant Double this);
+
+    public @PolyConstant short shortValue(@PolyConstant Double this);
+
+    public @PolyConstant int intValue(@PolyConstant Double this);
+
+    public @PolyConstant long longValue(@PolyConstant Double this);
+
+    public @PolyConstant float floatValue(@PolyConstant Double this);
+
+    public @PolyConstant double doubleValue(@PolyConstant Double this);
+
+    public @PolyConstant int hashCode(@PolyConstant Double this);
+
+    public static @PolyConstant long doubleToLongBits(@PolyConstant double value);
+
+    public static native @PolyConstant long doubleToRawLongBits(@PolyConstant double value);
+
+    public static native @PolyConstant double longBitsToDouble(@PolyConstant long bits);
+
+    public @PolyConstant int compareTo(@PolyConstant Double this, @PolyConstant Double anotherDouble);
+
+    public static @PolyConstant int compare(@PolyConstant double d1, @PolyConstant double d2);
+}

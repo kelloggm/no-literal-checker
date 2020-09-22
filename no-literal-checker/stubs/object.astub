@@ -1,0 +1,12 @@
+package java.lang;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+public class Object {
+
+    public native @MaybeDerivedFromConstant int hashCode();
+
+    protected native @PolyConstant Object clone(@PolyConstant Object this);
+
+    public @MaybeDerivedFromConstant String toString();
+}

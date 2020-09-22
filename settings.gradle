@@ -7,4 +7,7 @@
  * in the user guide at https://docs.gradle.org/5.0/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'templatefora-checker'
+rootProject.name = 'noliteral-checker'
+
+include ':no-literal-checker'
+include ':no-literal-qual'

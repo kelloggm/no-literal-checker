@@ -1,0 +1,12 @@
+import org.checkerframework.checker.noliteral.qual.*;
+
+package javax.swing;
+
+class JOptionPane {
+    static @NonConstant String showInputDialog(@MaybeDerivedFromConstant Component parentComponent, @MaybeDerivedFromConstant Object message);
+    static @PolyConstant String showInputDialog(@MaybeDerivedFromConstant Component parentComponent, @MaybeDerivedFromConstant Object message, @PolyConstant Object initialSelectionValue);
+    static @NonConstant String showInputDialog(@MaybeDerivedFromConstant Component parentComponent, @MaybeDerivedFromConstant Object message, @MaybeDerivedFromConstant String title, @MaybeDerivedFromConstant int messageType);
+    static @PolyConstant Object showInputDialog(@MaybeDerivedFromConstant Component parentComponent, @MaybeDerivedFromConstant Object message, @MaybeDerivedFromConstant String title, @MaybeDerivedFromConstant int messageType, @MaybeDerivedFromConstant Icon icon, @PolyConstant Object @PolyConstant [] selectionValues, @PolyConstant Object initialSelectionValue);
+    static @NonConstant String showInputDialog(@MaybeDerivedFromConstant Object message);
+    static @PolyConstant String showInputDialog(@MaybeDerivedFromConstant Object message, @PolyConstant Object initialSelectionValue);
+}

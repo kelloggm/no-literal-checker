@@ -1,0 +1,23 @@
+package java.util;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+class Arrays {
+    @PolyConstant byte @PolyConstant [] copyOf(@PolyConstant byte @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    @PolyConstant double @PolyConstant [] copyOf(@PolyConstant double @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    @PolyConstant float @PolyConstant [] copyOf(@PolyConstant float @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    @PolyConstant int @PolyConstant [] copyOf(@PolyConstant int @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    @PolyConstant long @PolyConstant [] copyOf(@PolyConstant long @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    @PolyConstant short @PolyConstant [] copyOf(@PolyConstant short @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    <T> @PolyConstant T @PolyConstant [] copyOf(@PolyConstant T @PolyConstant [] original, @MaybeDerivedFromConstant int newLength);
+    <T,U> @PolyConstant T @PolyConstant [] copyOf(@PolyConstant U @PolyConstant [] original, @MaybeDerivedFromConstant int newLength, @MaybeDerivedFromConstant Class<? extends T[]> newType);
+
+    @PolyConstant byte @PolyConstant [] copyOfRange(@PolyConstant byte @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    @PolyConstant double @PolyConstant [] copyOfRange(@PolyConstant double @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    @PolyConstant float @PolyConstant [] copyOfRange(@PolyConstant float @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    @PolyConstant int @PolyConstant [] copyOfRange(@PolyConstant int @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    @PolyConstant long @PolyConstant [] copyOfRange(@PolyConstant long @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    @PolyConstant short @PolyConstant [] copyOfRange(@PolyConstant short @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    <T> @PolyConstant T @PolyConstant [] copyOfRange(@PolyConstant T @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to);
+    <T,U> @PolyConstant T @PolyConstant [] copyOfRange(@PolyConstant U @PolyConstant [] original, @MaybeDerivedFromConstant int from, @MaybeDerivedFromConstant int to, @MaybeDerivedFromConstant Class<? extends T[]> newType);
+}

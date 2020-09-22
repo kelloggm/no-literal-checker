@@ -1,0 +1,16 @@
+import org.checkerframework.checker.noliteral.qual.*;
+
+package java.lang;
+
+class System {
+    static @NonConstant String getenv(@MaybeDerivedFromConstant String name);
+    static @NonConstant String getProperty(@MaybeDerivedFromConstant String key);
+    static @PolyConstant String getProperty(@MaybeDerivedFromConstant String key, @PolyConstant String def);
+}
+
+package java.util;
+
+class Properties {
+    static @NonConstant String getProperty(@MaybeDerivedFromConstant String key);
+    static @PolyConstant String getProperty(@MaybeDerivedFromConstant String key, @PolyConstant String def);
+}

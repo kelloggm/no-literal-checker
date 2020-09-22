@@ -1,0 +1,54 @@
+// This stub file contains examples of some libraries that probably shouldn't have constants
+// passed to them, from the JDK.
+
+package java.security;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+class KeyStore {
+    // TODO: add other KeyStore methods?
+    void load(@MaybeDerivedFromConstant InputStream stream, @NonConstant char @NonConstant [] password);
+    void store(@MaybeDerivedFromConstant OutputStream stream, @NonConstant char @NonConstant [] password);
+}
+
+// TODO: many of these annotations don't do anything, because SecureRandom doesn't actually
+// override the method (https://github.com/typetools/checker-framework/issues/3094).
+// java.util.Random is annotated like this instead.
+class SecureRandom {
+    SecureRandom(@NonConstant byte[] seed);
+    void setSeed(@NonConstant byte[] seed);
+    void setSeed(@NonConstant long seed);
+    @NonConstant byte @NonConstant [] generateSeed(@MaybeDerivedFromConstant int numBytes);
+    @MaybeDerivedFromConstant String getAlgorithm();
+    static @NonConstant byte @NonConstant [] getSeed(@MaybeDerivedFromConstant int numBytes);
+    /*@NonConstant protected int next(@MaybeDerivedFromConstant int numBits);
+    @NonConstant double nextDouble();
+    @NonConstant float nextFloat();
+    @NonConstant double nextGaussian();
+    @NonConstant int nextInt();
+    @NonConstant int nextInt(@MaybeDerivedFromConstant int bound);
+    @NonConstant long nextLong();*/
+}
+
+package javax.crypto.spec;
+
+class PBEKeySpec {
+    PBEKeySpec(@NonConstant char[] password);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount);
+    PBEKeySpec(@NonConstant char[] password, @NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount, @MaybeDerivedFromConstant int keyLength);
+}
+
+class PBEParameterSpec {
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount);
+    PBEParameterSpec(@NonConstant byte[] salt, @MaybeDerivedFromConstant int iterationCount, @MaybeDerivedFromConstant AlgorithmParameterSpec paramSpec);
+}
+
+class IvParameterSpec {
+    IvParameterSpec(@NonConstant byte[] iv);
+    IvParameterSpec(@NonConstant byte[] iv, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int len);
+}
+
+class SecretKeySpec {
+    SecretKeySpec(@NonConstant byte[] key, @MaybeDerivedFromConstant String algorithm);
+    SecretKeySpec(@NonConstant byte[] key, @MaybeDerivedFromConstant int offset, @MaybeDerivedFromConstant int len, @MaybeDerivedFromConstant String algorithm);
+}

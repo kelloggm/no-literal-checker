@@ -1,0 +1,20 @@
+package java.util;
+
+import org.checkerframework.checker.noliteral.qual.*;
+
+// These annotations are somewhat permissive, in that they
+// assume that Random, a pseudo number generator, produces
+// non-constant output.
+class Random {
+    @NonConstant protected int next(@MaybeDerivedFromConstant int numBits);
+    @NonConstant double nextDouble();
+    @NonConstant float nextFloat();
+    @NonConstant double nextGaussian();
+    @NonConstant int nextInt();
+    @NonConstant int nextInt(@MaybeDerivedFromConstant int bound);
+    @NonConstant long nextLong();
+    @NonConstant IntStream ints();
+    @NonConstant IntStream ints(@MaybeDerivedFromConstant long streamSize);
+    @NonConstant LongStream longs();
+    @NonConstant LongStream longs(@MaybeDerivedFromConstant long streamSize);
+}

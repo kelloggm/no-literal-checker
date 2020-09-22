@@ -1,0 +1,5 @@
+This directory contains two kinds of stub files:
+* stubs for JDK classes that wrap possibly-constant values
+* stubs that enforce that some cryptographic libraries that ship with the JDK don't get constant values
+
+Both kinds of stubs should be used if you want this checker to be useful.
